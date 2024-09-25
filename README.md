@@ -1,3 +1,36 @@
+アプリ名：OS課題相談広場
+
+作成者：琉球大学 webapp2班『琉球ラーメン』
+
+メンバーgitアカウント
+
+[rinoe225749](https://github.com/Rino225749)
+
+[e225711](https://github.com/e225711)
+
+[e225742](https://github.com/e225742)
+
+エレベーターピッチ
+
+「OSの課題について質問」したい
+
+「が聞きづらくて課題が進まない知能情報2年生」向けの、
+
+「OS課題相談広場」というプロダクトは
+
+「暖かい雰囲気の匿名グループチャットアプリ」です
+
+これは「匿名で、柔らかい文章で質疑応答」ができ、
+
+「OS講義のディスコードの質問チャンネル」とは違って、
+
+「曖昧な質問でも気軽にでき、シャイな生徒でも
+問題がスムーズに解決できる機能」が備わっている。
+
+アプリURL(https://enpit-2024-web2.vercel.app/)
+
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
