@@ -3,6 +3,6 @@ import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <h1>OS課題相談広場</h1>
+    <h1>OS課題相談広場!</h1>
   );
 }
