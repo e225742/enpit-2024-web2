@@ -1,8 +1,12 @@
-アプリ名：OS課題相談広場
+# アプリ名：OS課題相談広場
 
 作成者：琉球大学 webapp2班『琉球ラーメン』
 
-メンバーgitアカウント
+## アプリのリンク
+
+[OS課題相談広場](https://enpit-2024-web2.vercel.app/)
+
+## メンバーgitアカウント
 
 [rinoe225749](https://github.com/Rino225749)
 
@@ -10,7 +14,7 @@
 
 [e225742](https://github.com/e225742)
 
-エレベーターピッチ
+## エレベーターピッチ
 
 「OSの課題について質問」したい
 
@@ -27,9 +31,7 @@
 「曖昧な質問でも気軽にでき、シャイな生徒でも
 問題がスムーズに解決できる機能」が備わっている。
 
-アプリURL(https://enpit-2024-web2.vercel.app/)
-
-
+# Next.jsのREADME
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
