@@ -5,31 +5,6 @@
   padding: 20px;
 }
 
-.header {
-  grid-column: 1 / 3;
-  text-align: center;
-  background-color: #f0f0f0;
-  padding: 20px;
-}
-
-.header h1 {
-  margin: 0;
-}
-
-.header p {
-  margin: 10px 0;
-}
-
-.questionButton {
-  background-color: #0070f3;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1.2rem;
-}
-
 .sidebar {
   background-color: #e0e0e0;
   padding: 20px;
@@ -55,4 +30,11 @@
 
 .question p {
   margin: 10px 0;
+}
+
+.introSection {
+  background-color: #e0e0e0; /* サイドバーと同じ色 */
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
 }
