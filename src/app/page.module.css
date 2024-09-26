@@ -25,6 +25,7 @@
 }
 
 .question {
+  width: 1000px;
   margin-bottom: 20px;
   padding: 20px;
   background-color: #fafafa; /* 背景色 */
