@@ -1,0 +1,74 @@
+.container {
+    width: 80%;
+    margin: 0 auto;
+  }
+  
+  .container h1{
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .inputGroup {
+    margin-bottom: 20px;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .imageButton, .editButton, .previewButton {
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+  }
+  
+  .textAreaContainer {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .textArea {
+    width: 100%;
+    height: 200px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .cancelButton, .submitButton {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .cancelButton {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+  }
+  
+  .submitButton {
+    background-color: #0070f3;
+    color: white;
+    border: none;
+  }
+  
