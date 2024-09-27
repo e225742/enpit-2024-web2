@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from './page.module.css';
-import Header from './header'; // Headerコンポーネントをインポート
+import Header from '@/components/header/header'; // Headerコンポーネントをインポート
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('tab1'); // タブの状態を管理
