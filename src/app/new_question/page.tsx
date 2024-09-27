@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './page.module.css'; 
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const NewQuestionPage = () => {
   // const [isMounted, setIsMounted] = useState(false);
@@ -64,7 +65,10 @@ const NewQuestionPage = () => {
         </div>
         <div className={styles.footer}>
           {/* <button type="button" onClick={handleCancel} className={styles.cancelButton}>キャンセル</button> */}
-          <button type="button"  className={styles.cancelButton}>キャンセル</button>
+          <Link href="/">
+            <button type="button"  className={styles.cancelButton}>キャンセル</button>
+          </Link>
+          
           <button type="submit" className={styles.submitButton}>作成</button>
         </div>
       </form>

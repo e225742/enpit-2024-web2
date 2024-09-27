@@ -1,4 +1,5 @@
 import styles from './header.module.css';
+import Link from 'next/link';
 
 export default function Header() {
   return (
@@ -11,7 +12,9 @@ export default function Header() {
           <li>過去ログ</li>
           <li>使い方</li>
           <li>
-            <button className={styles.questionButton}>＋質問する</button>
+            <Link href="/new_question">
+              <button className={styles.questionButton}>＋質問する</button>
+            </Link>
           </li>
         </ul>
       </nav>
