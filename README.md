@@ -14,6 +14,8 @@
 
 [e225742](https://github.com/e225742)
 
+[ogiek0628](https://github.com/ogiek0628)
+
 ## エレベーターピッチ
 
 「OSの課題について質問」したい
