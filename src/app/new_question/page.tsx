@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import styles from './page.module.css'; 
 import Link from 'next/link';
+import { marked } from 'marked'; // markedライブラリをインポート
 
 const NewQuestionPage = () => {
   const [content, setContent] = useState(''); // 入力内容を管理するステート
@@ -33,13 +34,14 @@ const NewQuestionPage = () => {
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)} // 入力内容をステートに反映
-            placeholder="質問内容を入力してください"
+            placeholder="Markdown形式で質問内容を入力してください"
             rows={10}
             className={styles.textArea}
           />
-          <div className={styles.previewArea}>
-            {content || "ここにプレビューが表示されます"} {/* 入力された内容を表示 */}
-          </div>
+          <div
+            className={styles.previewArea}
+            dangerouslySetInnerHTML={{ __html: marked(content) }} // MarkdownをHTMLに変換して表示
+          />
         </div>
         <div className={styles.footer}>
           <Link href="/">
