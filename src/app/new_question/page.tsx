@@ -76,4 +76,4 @@ const NewQuestionPage = () => {
   );
 };
 
-export default NewQuestionPage;
+//export default NewQuestionPage;
