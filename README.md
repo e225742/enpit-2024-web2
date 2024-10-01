@@ -6,7 +6,7 @@
 
 [OS課題相談広場](https://enpit-2024-web2.vercel.app/)
 
-## メンバーgitアカウント
+## メンバーGitHubアカウント
 
 [rinoe225749](https://github.com/Rino225749)
 
