@@ -23,11 +23,18 @@ export default function Home() {
   // データベースから質問を取得するためのuseEffect
   useEffect(() => {
     const fetchQuestions = async () => {
-      const res = await fetch('/api/get-questions'); // get-questions APIを呼び出す
-      const data = await res.json();
-      setQuestions(data); // 質問データをステートにセット
+      try {
+        const res = await fetch('/api/get-questions');
+        if (!res.ok) {
+          throw new Error('Failed to fetch questions');
+        }
+        const data = await res.json();
+        setQuestions(data);
+      } catch (error) {
+        console.error('Error fetching questions:', error);
+      }
     };
-
+  
     fetchQuestions();
   }, []);
 
