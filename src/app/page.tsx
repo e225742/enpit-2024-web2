@@ -24,7 +24,7 @@ export default function Home() {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const res = await fetch('/api/get-questions',{ cache: 'no-store' });
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}`, { cache: 'no-store' });
         if (!res.ok) {
           throw new Error('Failed to fetch questions');
         }
