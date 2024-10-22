@@ -1,4 +1,4 @@
-"use client";  // これを追加することでクライアントコンポーネントとして扱われる
+"use client";
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'; // next/navigationを使用してリダイレクト
