@@ -20,7 +20,7 @@ export default function Home() {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const res = await fetch('/api/get-questions');
+        const res = await fetch('/api/get-questions', { cache: 'no-store' });
         if (!res.ok) {
           throw new Error(`Failed to fetch questions. Status: ${res.status}`);
         }
