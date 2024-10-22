@@ -1,3 +1,5 @@
+"use client";  // クライアントサイドで動作するコンポーネントであることを明示
+
 import React, { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import Header from '@/components/header/header';
@@ -16,7 +18,7 @@ const Home = () => {
     const fetchQuestions = async () => {
       try {
         const res = await fetch('https://enpit-2024-web2-five.vercel.app/api/get-questions', {
-          cache: 'no-store', // キャッシュを無効にして常に最新のデータを取得
+          cache: 'no-store',
         });
 
         if (!res.ok) {
@@ -26,8 +28,6 @@ const Home = () => {
         const data = await res.json();
         setQuestions(data);
       } catch (err: any) {
-        // エラーハンドリングの改善
-        console.error('Error fetching questions:', err.message || err);
         setError(err.message || 'Unknown error occurred');
       }
     };
