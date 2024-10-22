@@ -35,16 +35,8 @@ export default function Home() {
       }
     };
   
-    // 初回データ取得
     fetchQuestions();
-  
-    // 5秒ごとにデータを再取得
-    const interval = setInterval(fetchQuestions, 5000);
-  
-    // コンポーネントのクリーンアップ時にintervalをクリア
-    return () => clearInterval(interval);
   }, []);
-  
 
   return (
     <div>
