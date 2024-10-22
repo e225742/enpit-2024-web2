@@ -12,10 +12,10 @@ export async function GET() {
     const response = NextResponse.json(questions, { status: 200 });
     
     // CORS対応: 特定のオリジンを許可
-    response.headers.set('Access-Control-Allow-Origin', 'https://enpit-2024-web2-five.vercel.app');
+    //response.headers.set('Access-Control-Allow-Origin', 'https://enpit-2024-web2-five.vercel.app');
 
     // 必要に応じてすべてのオリジンを許可する場合
-    // response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Origin', '*');
 
     return response;
   } catch (error) {
