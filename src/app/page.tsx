@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import Header from '@/components/header/header'; // Headerコンポーネントをインポート
 
+//できるかなあ
 // 質問データの型定義
 type Question = {
   id: number;
