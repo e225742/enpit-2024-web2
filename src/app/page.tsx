@@ -22,15 +22,15 @@ export default function Home() {
       try {
         const res = await fetch('/api/get-questions');
         if (!res.ok) {
-          throw new Error('Failed to fetch questions');
+          throw new Error(`Failed to fetch questions. Status: ${res.status}`);
         }
         const data = await res.json();
-        setQuestions(data); // 最新の質問をセット
+        setQuestions(data); // 最新の質問をステートに保存
       } catch (error) {
         console.error('Error fetching questions:', error);
       }
     };
-
+  
     fetchQuestions();
   }, []);
 
