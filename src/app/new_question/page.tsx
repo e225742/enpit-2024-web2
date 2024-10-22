@@ -1,13 +1,11 @@
-"use client";
-
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; // next/navigationを使用してリダイレクト
+import { useRouter } from 'next/navigation'; // リダイレクト用
 import styles from './page.module.css';
 
 const NewQuestionPage = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const router = useRouter(); // ルーターをインスタンス化
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,8 +19,7 @@ const NewQuestionPage = () => {
     });
 
     if (res.ok) {
-      // 質問作成後にトップページにリダイレクト
-      router.push('/');
+      router.push('/'); // 質問作成後、トップページへリダイレクト
     } else {
       console.error('質問の作成に失敗しました');
     }
@@ -30,27 +27,20 @@ const NewQuestionPage = () => {
 
   return (
     <div className={styles.container}>
-      <h1>質問作成ページ</h1>
+      <h1>質問を作成</h1>
       <form onSubmit={handleSubmit}>
-        <div className={styles.inputGroup}>
-          <input
-            type="text"
-            placeholder="タイトルを入力してください"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className={styles.input}
-          />
-        </div>
-        <div className={styles.textAreaContainer}>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="質問内容を入力してください"
-            rows={10}
-            className={styles.textArea}
-          />
-        </div>
-        <button type="submit" className={styles.submitButton}>作成</button>
+        <input
+          type="text"
+          placeholder="タイトル"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <textarea
+          placeholder="質問内容"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+        />
+        <button type="submit">作成</button>
       </form>
     </div>
   );
