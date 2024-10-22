@@ -12,19 +12,23 @@ const NewQuestionPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await fetch('/api/create-question', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title, content }),
-    });
+    try {
+      const res = await fetch('/api/create-question', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, content }),
+      });
 
-    if (res.ok) {
-      // 質問作成後、トップページにリダイレクト
-      router.push('/');
-    } else {
-      console.error('質問の作成に失敗しました');
+      if (res.ok) {
+        // 質問作成後、トップページへリダイレクト
+        router.push('/');
+      } else {
+        console.error('質問の作成に失敗しました');
+      }
+    } catch (err) {
+      console.error('Error creating question:', err);
     }
   };
 

@@ -28,7 +28,7 @@ const Home = () => {
         const data = await res.json();
         setQuestions(data);
       } catch (err: any) {
-        setError(err.message || 'Unknown error occurred');
+        console.error('Error fetching questions:', err);
       }
     };
 
