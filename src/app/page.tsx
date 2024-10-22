@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import Header from '@/components/header/header'; // Headerコンポーネントをインポート
 
-// 質問の型定義
+// 質問データの型定義
 type Question = {
   id: number;
   title: string;
@@ -13,12 +13,7 @@ type Question = {
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('tab1'); // タブの状態を管理
-  const [questions, setQuestions] = useState<Question[]>([]); // 質問データの型を指定
-
-  // タブを切り替える関数
-  const handleTabClick = (tab: string) => {
-    setActiveTab(tab);
-  };
+  const [questions, setQuestions] = useState<Question[]>([]); // 質問データを管理
 
   // データベースから質問を取得するためのuseEffect
   useEffect(() => {
@@ -29,14 +24,19 @@ export default function Home() {
           throw new Error('Failed to fetch questions');
         }
         const data = await res.json();
-        setQuestions(data);
+        setQuestions(data); // 最新の質問をセット
       } catch (error) {
         console.error('Error fetching questions:', error);
       }
     };
-  
+
     fetchQuestions();
   }, []);
+
+  // タブを切り替える関数
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+  };
 
   return (
     <div>
@@ -55,9 +55,6 @@ export default function Home() {
         <aside className={styles.sidebar}>
           <p>タグ一覧</p>
           {/* タグのリスト（ダミー表示のまま） */}
-          {1.1}<br />
-          {1.2}<br />
-          {1.3}<br />
         </aside>
 
         <main className={styles.main}>
@@ -80,26 +77,13 @@ export default function Home() {
           {/* タブのコンテンツ */}
           <div className={styles.tabContent}>
             {activeTab === 'tab1' && (
-              <div className={styles.question}>
+              <div className={styles.questionList}>
                 {questions.map((question) => (
                   <div key={question.id} className={styles.questionItem}>
                     <h2>{question.title}</h2>
                     <p>{question.content}</p>
                   </div>
                 ))}
-              </div>
-            )}
-
-            {activeTab === 'tab2' && (
-              <div className={styles.question}>
-                {/* 未解決の質問をここに表示する */}
-                <div className={styles.questionItem}>
-                  <h2>未解決の問題1: データベース接続エラーの解決策</h2>
-                  <p>
-                    あるデータベースに接続する際に「接続タイムアウト」のエラーが発生しました。この問題を解決するための手順を教えていただけますか？
-                  </p>
-                </div>
-                {/* 他の未解決の問題も同様に追加 */}
               </div>
             )}
           </div>
