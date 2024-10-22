@@ -1,43 +1,21 @@
-"use client";  // クライアントサイドで動作するコンポーネントであることを明示
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import useSWR from 'swr';
 import styles from './page.module.css';
 import Header from '@/components/header/header';
 
-type Question = {
-  id: number;
-  title: string;
-  content: string;
-};
+// データ取得用の関数
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 
-const Home = () => {
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [error, setError] = useState<string | null>(null);
+export default function Home() {
+  // SWRを使用してデータを取得
+  const { data: questions, error } = useSWR('https://enpit-2024-web2-five.vercel.app/api/get-questions', fetcher, {
+    refreshInterval: 5000, // 5秒ごとに自動でデータを更新
+  });
 
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const res = await fetch('https://enpit-2024-web2-five.vercel.app/api/get-questions', {
-          cache: 'no-store',
-        });
-
-        if (!res.ok) {
-          throw new Error(`Failed to fetch: ${res.statusText}`);
-        }
-
-        const data = await res.json();
-        setQuestions(data);
-      } catch (err: any) {
-        console.error('Error fetching questions:', err);
-      }
-    };
-
-    fetchQuestions();
-  }, []);
-
-  if (error) {
-    return <div>エラーが発生しました: {error}</div>;
-  }
+  if (error) return <div>エラーが発生しました: {error.message}</div>;
+  if (!questions) return <div>読み込み中...</div>;
 
   return (
     <div>
@@ -45,12 +23,17 @@ const Home = () => {
 
       <div className={styles.introSection}>
         <h2>相談広場へようこそ！</h2>
+        <p>
+          OSの課題について質問をたくさん聞いてね〜 <br />
+          匿名で授業や課題について分からないことを質問できるよ！ <br />
+          学サポのTAや友人が答えてくれるよ！！
+        </p>
       </div>
 
       <main className={styles.main}>
         <h2>最新の質問</h2>
         <div className={styles.questionList}>
-          {questions.map((question) => (
+          {questions.map((question: { id: number, title: string, content: string }) => (
             <div key={question.id} className={styles.questionItem}>
               <h3>{question.title}</h3>
               <p>{question.content}</p>
@@ -60,6 +43,4 @@ const Home = () => {
       </main>
     </div>
   );
-};
-
-export default Home;
+}
