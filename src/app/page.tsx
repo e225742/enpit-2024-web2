@@ -1,4 +1,3 @@
-// Import necessary React components and styles
 import React from 'react';
 import styles from './page.module.css';
 import Header from '@/components/header/header'; // Headerコンポーネントをインポート
