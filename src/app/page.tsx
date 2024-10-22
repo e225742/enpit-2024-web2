@@ -10,16 +10,24 @@ type Question = {
   content: string;
 };
 
-type HomeProps = {
-  questions: Question[]; // サーバーサイドから渡される質問データの型
-};
+// 非同期関数を使用してサーバーサイドデータを取得
+async function getQuestions(): Promise<Question[]> {
+  const res = await fetch('https://enpit-2024-web2-five.vercel.app/api/get-questions', {
+    cache: 'no-store', // キャッシュを無視して常に最新のデータを取得
+  });
+  if (!res.ok) {
+    throw new Error('Failed to fetch questions');
+  }
+  return res.json();
+}
 
-// SSRでデータを取得して表示するページコンポーネント
-const Home = ({ questions }: HomeProps) => {
+const Home = async () => {
+  const questions = await getQuestions(); // サーバーサイドでデータを取得
+
   return (
     <div>
       <Header />
-      
+
       <div className={styles.introSection}>
         <h2>相談広場へようこそ！</h2>
         <p>
@@ -50,18 +58,5 @@ const Home = ({ questions }: HomeProps) => {
     </div>
   );
 };
-
-// サーバーサイドレンダリングで質問データを取得する関数
-export async function getServerSideProps() {
-  // サーバー側でAPIリクエストを実行
-  const res = await fetch('https://enpit-2024-web2-five.vercel.app/api/get-questions');
-  const questions = await res.json();
-
-  return {
-    props: {
-      questions, // 質問データをページコンポーネントに渡す
-    },
-  };
-}
 
 export default Home;
