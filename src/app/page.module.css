@@ -1,85 +1,45 @@
 .container {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  gap: 20px;
-  padding: 20px;
-}
-
-.sidebar {
-  width: 100vh;
-  height: 100vh; /* ビューポートの高さに設定 */
-  overflow-y: auto; /* 垂直方向にスクロール可能に設定 */
-  padding: 20px; /* パディングを追加 */
-  background-color: #f9f9f9; /* 背景色を設定 */
-  border-right: 1px solid #ddd; /* 右のボーダーを設定 */
-}
-
-.container {
-  display: flex; /* コンテナのレイアウトをフレックスに */
-}
-
-.main {
-  background-color: #fff;
-  padding: 20px;
-  border: 1px solid #ccc;
-}
-
-.question {
-  width: 1000px;
-  margin-bottom: 20px;
-  padding: 20px;
-  background-color: #fafafa; /* 背景色 */
-  border: 1px solid #ddd; /* 枠線 */
-  border-radius: 5px; /* 角を丸くする */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 軽い影を追加 */
-}
-
-.question h2 {
-  margin-top: 0;
-  font-size: 1.5em; /* 見出しのサイズを大きく */
-}
-
-.question p {
-  margin: 10px 0;
-  background-color: #e0e0e0; /* 質問の背景色 */
-  padding: 10px; /* パディングを追加して読みやすく */
-  border-radius: 3px; /* 角を丸くする */
-}
-
-.questionItem {
-  margin-bottom: 20px; /* 各質問の間の余白 */
-  padding: 20px; /* 内側の余白 */
-  background-color: #fafafa; /* 背景色 */
-  border: 1px solid #ddd; /* 枠線の色と太さ */
-  border-radius: 5px; /* 角を丸める（任意） */
-}
-
-
-.introSection {
-  background-color: #e0e0e0; /* サイドバーと同じ色 */
-  padding: 20px;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.tabs {
   display: flex;
 }
 
-.tabs button {
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.sidebar {
+  width: 25%;
+  padding: 20px;
 }
 
-.activeTab1,
-.activeTab2 {
-  background-color: #666; /* 濃い灰色 */
-  color: white; /* 文字色を白に */
+.main {
+  width: 75%;
+  padding: 20px;
+}
+
+.questionList {
+  max-height: 400px; /* 高さを固定してスクロール可能にする */
+  overflow-y: scroll; /* 縦方向にスクロール */
+  padding: 10px;
+  border: 1px solid #ddd;
+  background-color: #fafafa;
+  border-radius: 5px;
+}
+
+.questionItem {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 5px;
+}
+
+.tabs button {
+  margin-right: 10px;
+  padding: 10px 20px;
+}
+
+.activeTab1, .activeTab2 {
+  background-color: #666;
+  color: white;
 }
 
 .inactiveTab {
-  background-color: #ccc; /* 薄い灰色 */
-  color: black; /* 文字色を黒に */
+  background-color: #ccc;
+  color: black;
 }
