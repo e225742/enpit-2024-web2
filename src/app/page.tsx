@@ -1,21 +1,43 @@
-"use client";
+"use client";  // クライアントサイドで動作するコンポーネントであることを明示
 
-import React from 'react';
-import useSWR from 'swr';
+import React, { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import Header from '@/components/header/header';
 
-// データ取得用の関数
-const fetcher = (url: string) => fetch(url).then(res => res.json());
+type Question = {
+  id: number;
+  title: string;
+  content: string;
+};
 
-export default function Home() {
-  // SWRを使用してデータを取得
-  const { data: questions, error } = useSWR('https://enpit-2024-web2-five.vercel.app/api/get-questions', fetcher, {
-    refreshInterval: 5000, // 5秒ごとに自動でデータを更新
-  });
+const Home = () => {
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  if (error) return <div>エラーが発生しました: {error.message}</div>;
-  if (!questions) return <div>読み込み中...</div>;
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const res = await fetch('https://enpit-2024-web2-five.vercel.app/api/get-questions', {
+          cache: 'no-store',
+        });
+
+        if (!res.ok) {
+          throw new Error(`Failed to fetch: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        setQuestions(data);
+      } catch (err: any) {
+        setError(err.message || 'Unknown error occurred');
+      }
+    };
+
+    fetchQuestions();
+  }, []);
+
+  if (error) {
+    return <div>エラーが発生しました: {error}</div>;
+  }
 
   return (
     <div>
@@ -23,17 +45,12 @@ export default function Home() {
 
       <div className={styles.introSection}>
         <h2>相談広場へようこそ！</h2>
-        <p>
-          OSの課題について質問をたくさん聞いてね〜 <br />
-          匿名で授業や課題について分からないことを質問できるよ！ <br />
-          学サポのTAや友人が答えてくれるよ！！
-        </p>
       </div>
 
       <main className={styles.main}>
         <h2>最新の質問</h2>
         <div className={styles.questionList}>
-          {questions.map((question: { id: number, title: string, content: string }) => (
+          {questions.map((question) => (
             <div key={question.id} className={styles.questionItem}>
               <h3>{question.title}</h3>
               <p>{question.content}</p>
@@ -43,4 +60,6 @@ export default function Home() {
       </main>
     </div>
   );
-}
+};
+
+export default Home;
