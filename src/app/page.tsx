@@ -1,6 +1,4 @@
-import React from 'react';
-import styles from './page.module.css';
-import Header from '@/components/header/header';
+import React, { useState, useEffect } from 'react';
 
 type Question = {
   id: number;
@@ -8,41 +6,48 @@ type Question = {
   content: string;
 };
 
-async function fetchQuestions() {
-  const res = await fetch('https://enpit-2024-web2-five.vercel.app/api/get-questions', {
-    cache: 'no-store', // キャッシュを無効化して最新データを取得
-  });
-  
-  if (!res.ok) {
-    throw new Error('Failed to fetch questions');
-  }
-  
-  const questions = await res.json();
-  return questions;
-}
+export default function Home() {
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-export default async function Home() {
-  const questions: Question[] = await fetchQuestions();
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const res = await fetch('/api/get-questions', {
+          cache: 'no-store',
+        });
+
+        if (!res.ok) {
+          throw new Error(`Failed to fetch: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        setQuestions(data);
+      } catch (err: any) {
+        // エラーメッセージを設定
+        setError(err.message || 'Unknown error occurred');
+        console.error('Error fetching questions:', err.message || err);
+      }
+    };
+
+    fetchQuestions();
+  }, []);
+
+  if (error) {
+    return <div>エラーが発生しました: {error}</div>;
+  }
 
   return (
     <div>
-      <Header />
-
-      <div className={styles.introSection}>
-        <h2>相談広場へようこそ！</h2>
+      <h2>最新の質問</h2>
+      <div>
+        {questions.map((question) => (
+          <div key={question.id}>
+            <h3>{question.title}</h3>
+            <p>{question.content}</p>
+          </div>
+        ))}
       </div>
-
-      <main className={styles.main}>
-        <h2>最新の質問</h2>
-        <div className={styles.questionList}>
-          {questions.map((question) => (
-            <div key={question.id} className={styles.questionItem}>
-              <h3>{question.title}</h3>
-              <p>{question.content}</p>
-            </div>
-          ))}
-        </div>
-      </main>
     </div>
   );
 }
