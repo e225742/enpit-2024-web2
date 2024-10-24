@@ -8,21 +8,22 @@ type Question = {
   content: string;
 };
 
-// ISRを使ったデータ取得
-export async function getStaticProps() {
-  const res = await fetch('https://enpit-2024-web2-five.vercel.app/api/get-questions');
+async function fetchQuestions() {
+  const res = await fetch('https://enpit-2024-web2-five.vercel.app/api/get-questions', {
+    cache: 'no-store', // キャッシュを無効化して最新データを取得
+  });
+  
+  if (!res.ok) {
+    throw new Error('Failed to fetch questions');
+  }
+  
   const questions = await res.json();
-
-  return {
-    props: {
-      questions,
-    },
-    // ページを10秒ごとに再生成する設定
-    revalidate: 10, // 10秒ごとにページが再生成され、データが更新される
-  };
+  return questions;
 }
 
-export default function Home({ questions }: { questions: Question[] }) {
+export default async function Home() {
+  const questions: Question[] = await fetchQuestions();
+
   return (
     <div>
       <Header />
