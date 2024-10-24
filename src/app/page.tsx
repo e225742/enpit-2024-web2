@@ -1,6 +1,4 @@
-"use client";  // クライアントサイドで動作するコンポーネントであることを明示
-
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from './page.module.css';
 import Header from '@/components/header/header';
 
@@ -10,35 +8,21 @@ type Question = {
   content: string;
 };
 
-const Home = () => {
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [error, setError] = useState<string | null>(null);
+// ISRを使ったデータ取得
+export async function getStaticProps() {
+  const res = await fetch('https://enpit-2024-web2-five.vercel.app/api/get-questions');
+  const questions = await res.json();
 
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const res = await fetch('https://enpit-2024-web2-five.vercel.app/api/get-questions', {
-          cache: 'no-store',
-        });
+  return {
+    props: {
+      questions,
+    },
+    // ページを10秒ごとに再生成する設定
+    revalidate: 10, // 10秒ごとにページが再生成され、データが更新される
+  };
+}
 
-        if (!res.ok) {
-          throw new Error(`Failed to fetch: ${res.statusText}`);
-        }
-
-        const data = await res.json();
-        setQuestions(data);
-      } catch (err: any) {
-        setError(err.message || 'Unknown error occurred');
-      }
-    };
-
-    fetchQuestions();
-  }, []);
-
-  if (error) {
-    return <div>エラーが発生しました: {error}</div>;
-  }
-
+export default function Home({ questions }: { questions: Question[] }) {
   return (
     <div>
       <Header />
@@ -60,6 +44,4 @@ const Home = () => {
       </main>
     </div>
   );
-};
-
-export default Home;
+}

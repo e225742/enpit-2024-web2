@@ -5,16 +5,14 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    // データベースから全ての質問を取得
+    // 最新の質問を取得するクエリ
     const questions = await prisma.question.findMany({
-      orderBy: { createdAt: 'desc' }, // 質問を作成日時で並べ替え
+      orderBy: { createdAt: 'desc' }, // 最新順に取得
     });
 
-    // 正常なレスポンス
     return NextResponse.json(questions, { status: 200 });
   } catch (error) {
-    // エラーハンドリング
-    console.error('Error fetching questions from the database:', error);
+    console.error('Error fetching questions:', error);
     return NextResponse.json({ error: 'Failed to fetch questions' }, { status: 500 });
   }
 }
