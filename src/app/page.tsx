@@ -12,6 +12,7 @@ type Question = {
 };
 
 async function fetchQuestions(): Promise<Question[]> {
+  // データベースから最新の質問を取得
   const questions = await prisma.question.findMany({
     orderBy: { createdAt: 'desc' },
   });
@@ -19,6 +20,7 @@ async function fetchQuestions(): Promise<Question[]> {
 }
 
 export default async function Home() {
+  // 最新のデータを常に取得するようにキャッシュ設定を無効化
   const questions = await fetchQuestions();
 
   return (
@@ -43,3 +45,5 @@ export default async function Home() {
     </div>
   );
 }
+
+export const revalidate = 0; // ISRのキャッシュを無効化して最新のデータを取得
