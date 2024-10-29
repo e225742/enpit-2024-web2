@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import styles from './page.module.css';
+import styles from '@/app/page.module.css';
 
 type Question = {
   id: number;
