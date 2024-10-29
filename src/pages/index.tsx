@@ -1,6 +1,7 @@
 import React from 'react';
-import styles from './page.module.css';
+import styles from '../app/page.module.css';
 import Header from '@/components/header/header';
+
 
 type Question = {
   id: number;
