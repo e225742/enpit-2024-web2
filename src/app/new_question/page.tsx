@@ -10,6 +10,7 @@ import { marked } from 'marked'; // markedライブラリをインポート
 const NewQuestionPage = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [tags, setTags] = useState(''); // タグ入力用のステート
   const router = useRouter(); // ルーターをインスタンス化
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,7 +52,9 @@ const NewQuestionPage = () => {
         <div className={styles.inputGroup}>
           <input
             type="text"
-            placeholder="タグを選択してください"
+            placeholder="タグをカンマ区切りで入力してください"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
             className={styles.input}
           />
         </div>
