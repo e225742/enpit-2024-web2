@@ -8,12 +8,13 @@ generator client {
 }
 
 model Question {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  createdAt DateTime @default(now())
-  answers   Answer[] // 質問に対する回答のリレーション
-  tags      Tag[]    @relation("QuestionTags") // 質問に関連するタグのリレーション
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String
+  createdAt   DateTime @default(now())
+  answers     Answer[] // 質問に対する回答のリレーション
+  tags        Tag[]    @relation("QuestionTags") // 質問に関連するタグのリレーション
+  isResolved  Boolean  @default(false) // 解決状態を示すフィールド
 }
 
 model Answer {
