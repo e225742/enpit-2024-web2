@@ -1,42 +1,28 @@
-"use client";
-
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from './page.module.css';
-import Header from '@/components/header/header'; 
+import Header from '@/components/header/header';
+import { PrismaClient } from '@prisma/client';
+import QuestionsTab from '@/components/QuestionsTab';
 
-// 質問の型定義
+const prisma = new PrismaClient();
+
 type Question = {
   id: number;
   title: string;
   content: string;
 };
 
-export default function Home() {
-  const [activeTab, setActiveTab] = useState('tab1'); // タブの状態を管理
-  const [questions, setQuestions] = useState<Question[]>([]); // 質問データの型を指定
+// サーバーサイドでデータを取得する関数
+async function fetchQuestions(): Promise<Question[]> {
+  const questions = await prisma.question.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
+  return questions;
+}
 
-  // タブを切り替える関数
-  const handleTabClick = (tab: string) => {
-    setActiveTab(tab);
-  };
-
-  // データベースから質問を取得するためのuseEffect
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}`, { cache: 'no-store' });
-        if (!res.ok) {
-          throw new Error('Failed to fetch questions');
-        }
-        const data = await res.json();
-        setQuestions(data);
-      } catch (error) {
-        console.error('Error fetching questions:', error);
-      }
-    };
-  
-    fetchQuestions();
-  }, []);
+// サーバーコンポーネント
+export default async function Home() {
+  const questions = await fetchQuestions();
 
   return (
     <div>
@@ -51,60 +37,9 @@ export default function Home() {
         </p>
       </div>
 
-      <div className={styles.container}>
-        <aside className={styles.sidebar}>
-          <p>タグ一覧</p>
-          {/* タグのリスト（ダミー表示のまま） */}
-          {1.1}<br />
-          {1.2}<br />
-          {1.3}<br />
-        </aside>
-
-        <main className={styles.main}>
-          {/* タブナビゲーション */}
-          <div className={styles.tabs}>
-            <button
-              className={`${activeTab === 'tab1' ? styles.activeTab1 : styles.inactiveTab}`}
-              onClick={() => handleTabClick('tab1')}
-            >
-              最新の質問
-            </button>
-            <button
-              className={`${activeTab === 'tab2' ? styles.activeTab2 : styles.inactiveTab}`}
-              onClick={() => handleTabClick('tab2')}
-            >
-              未解決の質問
-            </button>
-          </div>
-
-          {/* タブのコンテンツ */}
-          <div className={styles.tabContent}>
-            {activeTab === 'tab1' && (
-              <div className={styles.question}>
-                {questions.map((question) => (
-                  <div key={question.id} className={styles.questionItem}>
-                    <h2>{question.title}</h2>
-                    <p>{question.content}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {activeTab === 'tab2' && (
-              <div className={styles.question}>
-                {/* 未解決の質問をここに表示する */}
-                <div className={styles.questionItem}>
-                  <h2>未解決の問題1: データベース接続エラーの解決策</h2>
-                  <p>
-                    あるデータベースに接続する際に「接続タイムアウト」のエラーが発生しました。この問題を解決するための手順を教えていただけますか？
-                  </p>
-                </div>
-                {/* 他の未解決の問題も同様に追加 */}
-              </div>
-            )}
-          </div>
-        </main>
-      </div>
+      <QuestionsTab questions={questions} />
     </div>
   );
 }
+
+export const revalidate = 0; // ISRのキャッシュを無効化して最新のデータを取得

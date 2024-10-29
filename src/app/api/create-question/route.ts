@@ -1,24 +1,27 @@
-import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
-  const { title, content } = await req.json();
-
-  if (!title || !content) {
-    return NextResponse.json({ error: 'タイトルと内容は必須です' }, { status: 400 });
-  }
-
   try {
-    const question = await prisma.question.create({
-      data: {
-        title,
-        content,
-      },
+    const { title, content } = await req.json();
+
+    const newQuestion = await prisma.question.create({
+      data: { title, content },
     });
-    return NextResponse.json(question, { status: 201 });
+
+    const response = NextResponse.json(newQuestion, { status: 201 });
+    
+    // CORS対応: 特定のオリジンを許可
+    response.headers.set('Access-Control-Allow-Origin', 'https://enpit-2024-web2-five.vercel.app');
+
+    // 必要に応じてすべてのオリジンを許可する場合
+    // response.headers.set('Access-Control-Allow-Origin', '*');
+
+    return response;
   } catch (error) {
-    return NextResponse.json({ error: '質問の作成に失敗しました' }, { status: 500 });
+    console.error('Error creating question:', error);
+    return NextResponse.json({ error: 'Failed to create question' }, { status: 500 });
   }
 }
