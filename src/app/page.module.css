@@ -83,3 +83,10 @@
   background-color: #ccc; /* 薄い灰色 */
   color: black; /* 文字色を黒に */
 }
+
+.markdownContent {
+  background-color: #e0e0e0; /* 灰色の背景色 */
+  padding: 10px;
+  border-radius: 3px;
+  line-height: 1.6; /* 行間を広げて読みやすく */
+}

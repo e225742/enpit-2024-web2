@@ -56,8 +56,8 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions }) => {
                 <div key={question.id} className={styles.questionItem}>
                   <h2>{question.title}</h2>
                   <div
-                    dangerouslySetInnerHTML={{ __html: marked(question.content) }} // MarkdownをHTMLに変換して表示
-                    className={styles.content}
+                    className={styles.markdownContent} // 追加したスタイルを適用
+                    dangerouslySetInnerHTML={{ __html: marked(question.content) }}
                   />
                 </div>
               ))}
