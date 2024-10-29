@@ -43,6 +43,8 @@ const NewQuestionPage = () => {
           <input
             type="text"
             placeholder="タイトルを入力してください"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             className={styles.input}
           />
         </div>
