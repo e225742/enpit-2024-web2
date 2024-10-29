@@ -3,26 +3,26 @@
   grid-template-columns: 1fr 3fr;
   gap: 20px;
   padding: 20px;
+  height: 100vh; /* ビューポート全体の高さに固定 */
+  overflow: hidden; /* 全体のスクロールを防止 */
 }
 
 .sidebar {
-  width: 100vh;
-  height: 100vh; /* ビューポートの高さに設定 */
-  overflow-y: auto; /* 垂直方向にスクロール可能に設定 */
-  padding: 20px; /* パディングを追加 */
-  background-color: #f9f9f9; /* 背景色を設定 */
-  border-right: 1px solid #ddd; /* 右のボーダーを設定 */
-}
-
-.container {
-  display: flex; /* コンテナのレイアウトをフレックスに */
+  height: 100%; /* サイドバーがコンテナ全体の高さに収まる */
+  overflow-y: auto; /* サイドバー内でのみスクロール */
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-right: 1px solid #ddd;
 }
 
 .main {
   background-color: #fff;
   padding: 20px;
   border: 1px solid #ccc;
+  height: 100%; /* コンテナの高さに合わせる */
+  overflow-y: auto; /* メインコンテンツ内でのみスクロール */
 }
+
 
 .question {
   width: 1000px;
@@ -82,4 +82,11 @@
 .inactiveTab {
   background-color: #ccc; /* 薄い灰色 */
   color: black; /* 文字色を黒に */
+}
+
+.markdownContent {
+  background-color: #e0e0e0; /* 灰色の背景色 */
+  padding: 10px;
+  border-radius: 3px;
+  line-height: 1.6; /* 行間を広げて読みやすく */
 }
