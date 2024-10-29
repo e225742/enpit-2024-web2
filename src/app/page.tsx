@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './page.module.css';
 import Header from '@/components/header/header';
 import { PrismaClient } from '@prisma/client';
-import QuestionsTab from '@/components/QuestionsTab';
+import QuestionsTab from '@/components/home/questions_tab';
 
 const prisma = new PrismaClient();
 
@@ -10,6 +10,7 @@ type Question = {
   id: number;
   title: string;
   content: string;
+  isResolved: boolean; // 解決済みかどうかのフラグを追加
 };
 
 // サーバーサイドでデータを取得する関数
@@ -20,9 +21,19 @@ async function fetchQuestions(): Promise<Question[]> {
   return questions;
 }
 
+// 解決済みと未解決の質問を分ける関数
+function separateQuestions(questions: Question[]) {
+  const unresolvedQuestions = questions.filter((question) => !question.isResolved);
+  return {
+    resolvedQuestions: questions.filter((question) => question.isResolved),
+    unresolvedQuestions,
+  };
+}
+
 // サーバーコンポーネント
 export default async function Home() {
   const questions = await fetchQuestions();
+  const { resolvedQuestions, unresolvedQuestions } = separateQuestions(questions);
 
   return (
     <div>
@@ -37,7 +48,7 @@ export default async function Home() {
         </p>
       </div>
 
-      <QuestionsTab questions={questions} />
+      <QuestionsTab questions={resolvedQuestions} unresolvedQuestions={unresolvedQuestions} />
     </div>
   );
 }
