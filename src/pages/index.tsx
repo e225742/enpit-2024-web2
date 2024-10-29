@@ -1,7 +1,7 @@
+import { GetServerSideProps } from 'next';
 import React from 'react';
-import styles from '../app/page.module.css';
-import Header from '@/components/header/header';
-
+import styles from '../app/page.module.css'; // CSSモジュールをインポート
+import Header from '@/components/header/header'; // Headerコンポーネントをインポート
 
 type Question = {
   id: number;
@@ -9,33 +9,11 @@ type Question = {
   content: string;
 };
 
-// getServerSidePropsを使用してサーバーサイドでデータを取得
-export async function getServerSideProps() {
-  const res = await fetch('https://enpit-2024-web2-five.vercel.app/api/get-questions', {
-    cache: 'no-store', // キャッシュを無効化して最新データを取得
-  });
-
-  if (!res.ok) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const questions: Question[] = await res.json();
-
-  // propsとしてページコンポーネントに渡す
-  return {
-    props: {
-      questions,
-    },
-  };
-}
-
-type Props = {
+type HomePageProps = {
   questions: Question[];
 };
 
-const Home: React.FC<Props> = ({ questions }) => {
+const Home = ({ questions }: HomePageProps) => {
   return (
     <div>
       <Header />
@@ -57,6 +35,25 @@ const Home: React.FC<Props> = ({ questions }) => {
       </main>
     </div>
   );
+};
+
+// getServerSidePropsを使用してサーバーサイドでデータを取得
+export const getServerSideProps: GetServerSideProps = async () => {
+  const res = await fetch('https://enpit-2024-web2-five.vercel.app/api/get-questions', {
+    cache: 'no-store', // キャッシュを無効化して最新データを取得
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch questions');
+  }
+
+  const questions: Question[] = await res.json();
+
+  return {
+    props: {
+      questions,
+    },
+  };
 };
 
 export default Home;
