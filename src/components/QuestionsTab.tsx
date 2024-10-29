@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import styles from '@/app/page.module.css';
+import { marked } from 'marked'; // markedライブラリをインポート
 
 type Question = {
   id: number;
@@ -54,7 +55,10 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions }) => {
               {questions.map((question) => (
                 <div key={question.id} className={styles.questionItem}>
                   <h2>{question.title}</h2>
-                  <p>{question.content}</p>
+                  <div
+                    dangerouslySetInnerHTML={{ __html: marked(question.content) }} // MarkdownをHTMLに変換して表示
+                    className={styles.content}
+                  />
                 </div>
               ))}
             </div>
