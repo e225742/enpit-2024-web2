@@ -8,23 +8,20 @@ const prisma = new PrismaClient({
 export async function POST(req: Request) {
   try {
     const { title, content, tags } = await req.json();
-
+    console.log("Received tags:", tags); // 受け取ったタグの内容を確認
+    
     // タグが未定義の場合、空の配列を使用
     const tagList = tags ?? [];
 
     // タグを個別に作成し、存在する場合は取得
     const tagRecords = await Promise.all(
       tagList.map(async (tag: string) => {
-        try {
-          return await prisma.tag.upsert({
-            where: { name: tag },
-            update: {},
-            create: { name: tag },
-          });
-        } catch (error) {
-          console.error(`Failed to upsert tag: ${tag}`, error); // エラーが発生したタグ名とエラーメッセージをログに出力
-          throw error;
-        }
+        console.log(`Processing tag: ${tag}`); // 各タグの処理を開始
+        return prisma.tag.upsert({
+          where: { name: tag },
+          update: {},
+          create: { name: tag },
+        });
       })
     );
 
