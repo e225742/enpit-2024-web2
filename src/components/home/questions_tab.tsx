@@ -1,93 +1,87 @@
 "use client";
 import React, { useState } from 'react';
-import Link from 'next/link'; // Linkコンポーネントをインポート
+import Link from 'next/link';
 import styles from '@/app/page.module.css';
-import { marked } from 'marked'; // markedライブラリをインポート
+import { marked } from 'marked';
 
 type Question = {
   id: number;
   title: string;
   content: string;
+  isResolved: boolean;
 };
 
 type QuestionsTabProps = {
   questions: Question[];
-  unresolvedQuestions: Question[]; // 未解決の質問を受け取るプロパティ
+  unresolvedQuestions: Question[];
 };
 
+// タブの状態を表す列挙型
+enum Tab {
+  LatestQuestions = 'latest',
+  UnresolvedQuestions = 'unresolved',
+}
+
 const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuestions }) => {
-  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2'>('tab1'); // タブの状態を管理
+  const [activeTab, setActiveTab] = useState<Tab>(Tab.LatestQuestions); // 初期タブを「最新の質問」に設定
 
   // タブを切り替える関数
-  const handleTabClick = (tab: 'tab1' | 'tab2') => {
+  const handleTabClick = (tab: Tab) => {
     setActiveTab(tab);
   };
+
+  // 質問のリストを表示するためのヘルパー関数
+  const renderQuestions = (questions: Question[]) => (
+    <div className={styles.question}>
+      {questions.length > 0 ? (
+        questions.map((question) => (
+          <div key={question.id} className={styles.questionItem}>
+            <h2>
+              <Link href={`/question/${question.id}`}>{question.title}</Link>
+            </h2>
+            <div
+              className={styles.markdownContent}
+              dangerouslySetInnerHTML={{ __html: marked(question.content) }}
+            />
+          </div>
+        ))
+      ) : (
+        <p>{activeTab === Tab.LatestQuestions ? '質問はまだありません。' : '未解決の質問はありません。'}</p>
+      )}
+    </div>
+  );
 
   return (
     <div className={styles.container}>
       <aside className={styles.sidebar}>
         <p>タグ一覧</p>
         {/* タグのリスト（ダミー表示のまま） */}
-        <p>タグ1</p>
-        <p>タグ2</p>
-        <p>タグ3</p>
+        {1.1}<br />
+        {1.2}<br />
+        {1.3}<br />
       </aside>
 
       <main className={styles.main}>
         {/* タブナビゲーション */}
         <div className={styles.tabs}>
-          {['tab1', 'tab2'].map((tab) => (
-            <button
-              key={tab}
-              className={activeTab === tab ? styles.activeTab : styles.inactiveTab}
-              onClick={() => handleTabClick(tab as 'tab1' | 'tab2')}
-            >
-              {tab === 'tab1' ? '最新の質問' : '未解決の質問'}
-            </button>
-          ))}
+          <button
+            className={activeTab === Tab.LatestQuestions ? styles.activeTab : styles.inactiveTab}
+            onClick={() => handleTabClick(Tab.LatestQuestions)}
+          >
+            最新の質問
+          </button>
+          <button
+            className={activeTab === Tab.UnresolvedQuestions ? styles.activeTab : styles.inactiveTab}
+            onClick={() => handleTabClick(Tab.UnresolvedQuestions)}
+          >
+            未解決の質問
+          </button>
         </div>
 
         {/* タブのコンテンツ */}
         <div className={styles.tabContent}>
-          {activeTab === 'tab1' && (
-            <div className={styles.question}>
-              {questions.length > 0 ? (
-                questions.map((question) => (
-                  <div key={question.id} className={styles.questionItem}>
-                    <h2>
-                      <Link href={`/question/${question.id}`}>{question.title}</Link> {/* リンクを追加 */}
-                    </h2>
-                    <div
-                      className={styles.markdownContent} // 追加したスタイルを適用
-                      dangerouslySetInnerHTML={{ __html: marked(question.content) }}
-                    />
-                  </div>
-                ))
-              ) : (
-                <p>質問はまだありません。</p>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'tab2' && (
-            <div className={styles.question}>
-              {unresolvedQuestions.length > 0 ? (
-                unresolvedQuestions.map((question) => (
-                  <div key={question.id} className={styles.questionItem}>
-                    <h2>
-                      <Link href={`/question/${question.id}`}>{question.title}</Link> {/* リンクを追加 */}
-                    </h2>
-                    <div
-                      className={styles.markdownContent} // 追加したスタイルを適用
-                      dangerouslySetInnerHTML={{ __html: marked(question.content) }}
-                    />
-                  </div>
-                ))
-              ) : (
-                <p>未解決の質問はありません。</p>
-              )}
-            </div>
-          )}
+          {activeTab === Tab.LatestQuestions && renderQuestions(questions)}
+          {activeTab === Tab.UnresolvedQuestions && renderQuestions(unresolvedQuestions)}
         </div>
       </main>
     </div>
