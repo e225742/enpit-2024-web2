@@ -4,7 +4,7 @@
 
 ## アプリのリンク
 
-[OS課題相談広場](https://enpit-2024-web2-five.vercel.app/)
+[OS課題相談広場](https://enpit-2024-web2.vercel.app/)
 
 ## メンバーGitHubアカウント
 
