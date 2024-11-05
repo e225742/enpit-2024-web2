@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from '@/app/page.module.css';
 import { marked } from 'marked'; // markedライブラリをインポート
 
@@ -16,30 +16,11 @@ type Tag = {
 
 type QuestionsTabProps = {
   questions: Question[];
+  tags: Tag[];
 };
 
-const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions }) => {
+const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, tags }) => {
   const [activeTab, setActiveTab] = useState('tab1'); // タブの状態を管理
-  const [tags, setTags] = useState<Tag[]>([]); // タグの状態を追加
-
-  // タグ一覧を取得
-  useEffect(() => {
-    const fetchTags = async () => {
-      try {
-        const res = await fetch('/api/get-tags');
-        if (res.ok) {
-          const data = await res.json();
-          setTags(data);
-        } else {
-          console.error('Failed to fetch tags');
-        }
-      } catch (error) {
-        console.error('Error fetching tags:', error);
-      }
-    };
-
-    fetchTags();
-  }, []);
 
   // タブを切り替える関数
   const handleTabClick = (tab: string) => {

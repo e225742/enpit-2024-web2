@@ -12,6 +12,11 @@ type Question = {
   content: string;
 };
 
+type Tag = {
+  id: number;
+  name: string;
+};
+
 // サーバーサイドでデータを取得する関数
 async function fetchQuestions(): Promise<Question[]> {
   const questions = await prisma.question.findMany({
@@ -20,9 +25,18 @@ async function fetchQuestions(): Promise<Question[]> {
   return questions;
 }
 
+// サーバーサイドでタグを取得する関数
+async function fetchTags(): Promise<Tag[]> {
+  const tags = await prisma.tag.findMany({
+    orderBy: { name: 'asc' },
+  });
+  return tags;
+}
+
 // サーバーコンポーネント
 export default async function Home() {
   const questions = await fetchQuestions();
+  const tags = await fetchTags(); // タグ一覧を取得
 
   return (
     <div>
@@ -37,7 +51,8 @@ export default async function Home() {
         </p>
       </div>
 
-      <QuestionsTab questions={questions} />
+      {/* QuestionsTab に questions と tags を渡す */}
+      <QuestionsTab questions={questions} tags={tags} />
     </div>
   );
 }
