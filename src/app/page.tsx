@@ -10,30 +10,29 @@ type Question = {
   id: number;
   title: string;
   content: string;
-  isResolved: boolean; // 解決済みかどうかのフラグを追加
+  isResolved: boolean;
+  createdAt: Date;
 };
 
-// サーバーサイドでデータを取得する関数
-async function fetchQuestions(): Promise<Question[]> {
-  const questions = await prisma.question.findMany({
+// サーバーサイドで最新の質問と未解決の質問を取得する関数
+async function fetchLatestQuestions(): Promise<Question[]> {
+  return await prisma.question.findMany({
     orderBy: { createdAt: 'desc' },
+    take: 10, // 必要に応じて最新10件だけ取得するなど制限可能
   });
-  return questions;
 }
 
-// 解決済みと未解決の質問を分ける関数
-function separateQuestions(questions: Question[]) {
-  const unresolvedQuestions = questions.filter((question) => !question.isResolved);
-  return {
-    resolvedQuestions: questions.filter((question) => question.isResolved),
-    unresolvedQuestions,
-  };
+async function fetchUnresolvedQuestions(): Promise<Question[]> {
+  return await prisma.question.findMany({
+    where: { isResolved: false },
+    orderBy: { createdAt: 'desc' },
+  });
 }
 
 // サーバーコンポーネント
 export default async function Home() {
-  const questions = await fetchQuestions();
-  const { resolvedQuestions, unresolvedQuestions } = separateQuestions(questions);
+  const latestQuestions = await fetchLatestQuestions();
+  const unresolvedQuestions = await fetchUnresolvedQuestions();
 
   return (
     <div>
@@ -48,9 +47,10 @@ export default async function Home() {
         </p>
       </div>
 
-      <QuestionsTab questions={resolvedQuestions} unresolvedQuestions={unresolvedQuestions} />
+      {/* タブコンポーネントにデータを渡す */}
+      <QuestionsTab questions={latestQuestions} unresolvedQuestions={unresolvedQuestions} />
     </div>
   );
 }
 
-export const revalidate = 0; // ISRのキャッシュを無効化して最新のデータを取得
+export const revalidate = 0; // キャッシュを無効化して常に最新のデータを取得

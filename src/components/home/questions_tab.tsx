@@ -16,21 +16,18 @@ type QuestionsTabProps = {
   unresolvedQuestions: Question[];
 };
 
-// タブの状態を表す列挙型
 enum Tab {
   LatestQuestions = 'latest',
   UnresolvedQuestions = 'unresolved',
 }
 
 const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuestions }) => {
-  const [activeTab, setActiveTab] = useState<Tab>(Tab.LatestQuestions); // 初期タブを「最新の質問」に設定
+  const [activeTab, setActiveTab] = useState<Tab>(Tab.LatestQuestions);
 
-  // タブを切り替える関数
   const handleTabClick = (tab: Tab) => {
     setActiveTab(tab);
   };
 
-  // 質問のリストを表示するためのヘルパー関数
   const renderQuestions = (questions: Question[]) => (
     <div className={styles.question}>
       {questions.length > 0 ? (
@@ -55,14 +52,13 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
     <div className={styles.container}>
       <aside className={styles.sidebar}>
         <p>タグ一覧</p>
-        {/* タグのリスト（ダミー表示のまま） */}
+        {/* タグのリスト（ダミー表示） */}
         {1.1}<br />
         {1.2}<br />
         {1.3}<br />
       </aside>
 
       <main className={styles.main}>
-        {/* タブナビゲーション */}
         <div className={styles.tabs}>
           <button
             className={activeTab === Tab.LatestQuestions ? styles.activeTab : styles.inactiveTab}
@@ -78,7 +74,6 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
           </button>
         </div>
 
-        {/* タブのコンテンツ */}
         <div className={styles.tabContent}>
           {activeTab === Tab.LatestQuestions && renderQuestions(questions)}
           {activeTab === Tab.UnresolvedQuestions && renderQuestions(unresolvedQuestions)}
