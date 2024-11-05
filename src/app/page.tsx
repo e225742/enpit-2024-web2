@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './page.module.css';
 import Header from '@/components/header/header';
 import { PrismaClient } from '@prisma/client';
-import QuestionsTab from '@/components/QuestionsTab';
+import QuestionsTab from '@/components/home/questions_tab';
 
 const prisma = new PrismaClient();
 
@@ -10,19 +10,29 @@ type Question = {
   id: number;
   title: string;
   content: string;
+  isResolved: boolean;
+  createdAt: Date;
 };
 
-// サーバーサイドでデータを取得する関数
-async function fetchQuestions(): Promise<Question[]> {
-  const questions = await prisma.question.findMany({
+// サーバーサイドで最新の質問と未解決の質問を取得する関数
+async function fetchLatestQuestions(): Promise<Question[]> {
+  return await prisma.question.findMany({
+    orderBy: { createdAt: 'desc' },
+    take: 10, // 必要に応じて最新10件だけ取得するなど制限可能
+  });
+}
+
+async function fetchUnresolvedQuestions(): Promise<Question[]> {
+  return await prisma.question.findMany({
+    where: { isResolved: false },
     orderBy: { createdAt: 'desc' },
   });
-  return questions;
 }
 
 // サーバーコンポーネント
 export default async function Home() {
-  const questions = await fetchQuestions();
+  const latestQuestions = await fetchLatestQuestions();
+  const unresolvedQuestions = await fetchUnresolvedQuestions();
 
   return (
     <div>
@@ -37,9 +47,10 @@ export default async function Home() {
         </p>
       </div>
 
-      <QuestionsTab questions={questions} />
+      {/* タブコンポーネントにデータを渡す */}
+      <QuestionsTab questions={latestQuestions} unresolvedQuestions={unresolvedQuestions} />
     </div>
   );
 }
 
-export const revalidate = 0; // ISRのキャッシュを無効化して最新のデータを取得
+export const revalidate = 0; // キャッシュを無効化して常に最新のデータを取得
