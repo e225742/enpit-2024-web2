@@ -1,21 +1,35 @@
-// app/question/[id]/QuestionContent.tsx
+// src/components/question/question.tsx
 "use client"; // クライアントコンポーネントとしてマーク
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function QuestionContent({ question }: { question: any }) {
   const [answerContent, setAnswerContent] = useState('');
+  const [answers, setAnswers] = useState(question.answers);
+
+  // 再フェッチ関数
+  const fetchAnswers = async () => {
+    const res = await fetch(`/api/questions/${question.id}/answers`);
+    const data = await res.json();
+    setAnswers(data);
+  };
+
+  // コンポーネントがマウントされたときに初期の回答を取得
+  useEffect(() => {
+    fetchAnswers();
+  }, [question.id]);
 
   const handleAnswerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await fetch('/api/create-answer', {
+      const res = await fetch('/api/create-answer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: answerContent, questionId: question.id }),
       });
-      setAnswerContent(''); // 入力内容をリセット
-      // ここで再フェッチして画面を更新する処理を追加することも考えられます
+      const newAnswer = await res.json();
+      setAnswers((prevAnswers: any) => [...prevAnswers, newAnswer]);
+      setAnswerContent('');
     } catch (err) {
       console.error('Error creating answer:', err);
     }
@@ -37,9 +51,11 @@ function QuestionContent({ question }: { question: any }) {
         <button type="submit">回答を投稿</button>
       </form>
 
+      <button onClick={fetchAnswers}>リロード</button> {/* リロードボタン追加 */}
+
       <div>
         <h3>既存の回答</h3>
-        {question.answers.map((answer: any) => (
+        {answers.map((answer: any) => (
           <div key={answer.id}>
             <p>{answer.content}</p>
           </div>
