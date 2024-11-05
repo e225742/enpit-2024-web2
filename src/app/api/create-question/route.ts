@@ -7,18 +7,27 @@ export async function POST(req: Request) {
   try {
     const { title, content, tags } = await req.json();
 
-    // tags が未定義の場合、空の配列を使う
+    // タグが未定義の場合、空の配列を使用
     const tagList = tags ?? [];
 
+    // タグを個別に作成し、存在する場合は取得
+    const tagRecords = await Promise.all(
+      tagList.map(async (tag: string) => {
+        return prisma.tag.upsert({
+          where: { name: tag },
+          update: {},
+          create: { name: tag },
+        });
+      })
+    );
+
+    // 質問を作成し、タグと関連付け
     const newQuestion = await prisma.question.create({
       data: {
         title,
         content,
         tags: {
-          connectOrCreate: tagList.map((tag: string) => ({
-            where: { name: tag },
-            create: { name: tag },
-          })),
+          connect: tagRecords.map(tagRecord => ({ id: tagRecord.id })),
         },
       },
     });
