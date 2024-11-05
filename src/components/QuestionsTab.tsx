@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '@/app/page.module.css';
 import { marked } from 'marked'; // markedライブラリをインポート
 
@@ -9,12 +9,37 @@ type Question = {
   content: string;
 };
 
+type Tag = {
+    id: number;
+    name: string;
+  };
+
 type QuestionsTabProps = {
   questions: Question[];
 };
 
 const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions }) => {
   const [activeTab, setActiveTab] = useState('tab1'); // タブの状態を管理
+  const [tags, setTags] = useState<Tag[]>([]); // タグの状態を追加
+
+  // タグ一覧を取得
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const res = await fetch('/api/get-tags');
+        if (res.ok) {
+          const data = await res.json();
+          setTags(data);
+        } else {
+          console.error('Failed to fetch tags');
+        }
+      } catch (error) {
+        console.error('Error fetching tags:', error);
+      }
+    };
+
+    fetchTags();
+  }, []);
 
   // タブを切り替える関数
   const handleTabClick = (tab: string) => {
@@ -24,11 +49,16 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions }) => {
   return (
     <div className={styles.container}>
       <aside className={styles.sidebar}>
-        <p>タグ一覧</p>
-        {/* タグのリスト（ダミー表示のまま） */}
-        {1.1}<br />
-        {1.2}<br />
-        {1.3}<br />
+      <p>タグ一覧</p>
+        {tags.length > 0 ? (
+          tags.map((tag) => (
+            <div key={tag.id}>
+              {tag.name}<br />
+            </div>
+          ))
+        ) : (
+          <p>タグがありません</p>
+        )}
       </aside>
 
       <main className={styles.main}>
