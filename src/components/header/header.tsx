@@ -10,7 +10,7 @@ export default function Header() {
       <nav className={styles.nav}>
         <ul>
           <li>
-            <Link href="/serch_question">
+            <Link href="/search_question">
             <button className={styles.questionButton}>質問検索</button>
             </Link>
             過去ログ
