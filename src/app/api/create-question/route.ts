@@ -1,14 +1,12 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'], // デバッグログを有効にする
-});
+const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
     const { title, content, tags } = await req.json();
-    console.log("Received tags:", tags); // 受け取ったタグの内容を確認
+    // console.log("Received tags:", tags); // 受け取ったタグの内容を確認
     
     // タグが未定義の場合、空の配列を使用
     const tagList = tags ?? [];
@@ -16,7 +14,7 @@ export async function POST(req: Request) {
     // タグを個別に作成し、存在する場合は取得
     const tagRecords = await Promise.all(
       tagList.map(async (tag: string) => {
-        console.log(`Processing tag: ${tag}`); // 各タグの処理を開始
+        // console.log(`Processing tag: ${tag}`); // 各タグの処理を開始
         return prisma.tag.upsert({
           where: { name: tag },
           update: {},
