@@ -9,6 +9,7 @@ const TagSelector = ({ selectedTags, setSelectedTags }: { selectedTags: Tag[]; s
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [query, setQuery] = useState('');
   const [filteredTags, setFilteredTags] = useState<Tag[]>([]);
+  const [showAllTags, setShowAllTags] = useState(false); // 全てのタグを表示するかどうかの状態
 
   // タグ一覧を取得する
   useEffect(() => {
@@ -24,22 +25,31 @@ const TagSelector = ({ selectedTags, setSelectedTags }: { selectedTags: Tag[]; s
 
   // 入力に基づいてタグ候補をフィルタリング
   useEffect(() => {
-    if (query === '') {
+    if (query === '' && !showAllTags) {
       setFilteredTags([]);
+    } else if (query === '' && showAllTags) {
+      // クリック時に全てのタグを表示
+      setFilteredTags(allTags.filter(tag => !selectedTags.some(t => t.id === tag.id)));
     } else {
       setFilteredTags(allTags.filter(tag => tag.name.includes(query) && !selectedTags.some(t => t.id === tag.id)));
     }
-  }, [query, allTags, selectedTags]);
+  }, [query, allTags, selectedTags, showAllTags]);
 
   // タグを選択したときの処理
   const handleSelectTag = (tag: Tag) => {
     setSelectedTags([...selectedTags, tag]);
     setQuery(''); // 入力フィールドをクリア
+    setShowAllTags(false); // 全てのタグ表示をリセット
   };
 
   // 選択したタグを削除する
   const handleRemoveTag = (tagId: number) => {
     setSelectedTags(selectedTags.filter(tag => tag.id !== tagId));
+  };
+
+  // フィールドクリック時に全てのタグを表示
+  const handleFocus = () => {
+    setShowAllTags(true);
   };
 
   return (
@@ -55,6 +65,7 @@ const TagSelector = ({ selectedTags, setSelectedTags }: { selectedTags: Tag[]; s
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        onFocus={handleFocus} // フィールドがクリックされたときに全てのタグを表示
         placeholder="タグを選択するか作成"
         style={{ width: '100%', padding: '8px', marginTop: '10px' }}
       />
