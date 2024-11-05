@@ -5,20 +5,37 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
-    const { title, content } = await req.json();
+    const { title, content, tags } = await req.json();
+    // console.log("Received tags:", tags); // 受け取ったタグの内容を確認
+    
+    // タグが未定義の場合、空の配列を使用
+    const tagList = tags ?? [];
 
+    // タグを個別に作成し、存在する場合は取得
+    const tagRecords = await Promise.all(
+      tagList.map(async (tag: string) => {
+        // console.log(`Processing tag: ${tag}`); // 各タグの処理を開始
+        return prisma.tag.upsert({
+          where: { name: tag },
+          update: {},
+          create: { name: tag },
+        });
+      })
+    );
+
+    // 質問を作成し、タグと関連付け
     const newQuestion = await prisma.question.create({
-      data: { title, content },
+      data: {
+        title,
+        content,
+        tags: {
+          connect: tagRecords.map(tagRecord => ({ id: tagRecord.id })),
+        },
+      },
     });
 
     const response = NextResponse.json(newQuestion, { status: 201 });
-    
-    // CORS対応: 特定のオリジンを許可
     response.headers.set('Access-Control-Allow-Origin', 'https://enpit-2024-web2-five.vercel.app');
-
-    // 必要に応じてすべてのオリジンを許可する場合
-    // response.headers.set('Access-Control-Allow-Origin', '*');
-
     return response;
   } catch (error) {
     console.error('Error creating question:', error);

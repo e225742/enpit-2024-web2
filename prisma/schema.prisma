@@ -29,4 +29,5 @@ model Tag {
   id        Int        @id @default(autoincrement())
   name      String     @unique // タグ名
   questions Question[] @relation("QuestionTags") // タグに関連する質問のリレーション
+
 }
