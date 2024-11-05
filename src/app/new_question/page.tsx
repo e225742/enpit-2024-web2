@@ -54,6 +54,7 @@ const NewQuestionPage = () => {
           />
         </div>
         <div className={styles.inputGroup}>
+          <TagSelector selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
           {/* <input
             type="text"
             placeholder="タグをカンマ区切りで入力してください"
@@ -80,12 +81,7 @@ const NewQuestionPage = () => {
             dangerouslySetInnerHTML={{ __html: marked(content) }} // MarkdownをHTMLに変換して表示
           />
         </div>
-
-        {/* タグ選択コンポーネントの追加 */}
-        <div className={styles.inputGroup}>
-          <TagSelector selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
-        </div>
-
+        
         <div className={styles.footer}>
           <Link href="/">
             <button type="button" className={styles.cancelButton}>キャンセル</button>
