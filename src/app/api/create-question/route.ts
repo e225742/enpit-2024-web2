@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  log: ['query', 'info', 'warn', 'error'], // デバッグログを有効にする
+});
 
 export async function POST(req: Request) {
   try {
@@ -13,11 +15,16 @@ export async function POST(req: Request) {
     // タグを個別に作成し、存在する場合は取得
     const tagRecords = await Promise.all(
       tagList.map(async (tag: string) => {
-        return prisma.tag.upsert({
-          where: { name: tag },
-          update: {},
-          create: { name: tag },
-        });
+        try {
+          return await prisma.tag.upsert({
+            where: { name: tag },
+            update: {},
+            create: { name: tag },
+          });
+        } catch (error) {
+          console.error(`Failed to upsert tag: ${tag}`, error); // エラーが発生したタグ名とエラーメッセージをログに出力
+          throw error;
+        }
       })
     );
 
