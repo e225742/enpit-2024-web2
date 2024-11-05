@@ -13,7 +13,11 @@ export default function Header() {
       </div>
       <nav className={styles.nav}>
         <ul>
-          <li>過去ログ</li>
+          <li>
+            <Link href="/search_question">
+            <button className={styles.questionButton}>質問検索</button>
+            </Link>
+          </li>
           <li>使い方</li>
           <li>
             <Link href="/new_question">
