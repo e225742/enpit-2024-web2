@@ -17,10 +17,10 @@ model Question {
 }
 
 model Answer {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
-  question  Question @relation(fields: [questionId], references: [id])
+  id         Int      @id @default(autoincrement())
+  content    String
+  createdAt  DateTime @default(now())
+  question   Question @relation(fields: [questionId], references: [id])
   questionId Int
 }
 
