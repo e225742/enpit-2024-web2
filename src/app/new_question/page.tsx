@@ -5,12 +5,17 @@ import { useRouter } from 'next/navigation'; // next/navigationを使用して�
 import styles from './page.module.css';
 import Link from 'next/link';
 import { marked } from 'marked'; // markedライブラリをインポート
+import TagSelector from '@/components/TagSelector'
 
+type Tag = {
+  id: number;
+  name: string;
+};
 
 const NewQuestionPage = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [tags, setTags] = useState(''); // タグ入力用のステート
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]); // 選択されたタグの状態を追加
   const router = useRouter(); // ルーターをインスタンス化
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,7 +27,7 @@ const NewQuestionPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title, content, tags: tags.split(',').map(tag => tag.trim()) }), // タグを配列として送信
+        body: JSON.stringify({ title, content, tags: selectedTags.map(tag => tag.name),}), // タグを配列として送信
       });
   
       if (res.ok) {
@@ -49,13 +54,13 @@ const NewQuestionPage = () => {
           />
         </div>
         <div className={styles.inputGroup}>
-          <input
+          {/* <input
             type="text"
             placeholder="タグをカンマ区切りで入力してください"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
             className={styles.input}
-          />
+          /> */}
         </div>
         <div className={styles.buttonGroup}>
           <button type="button" className={styles.imageButton}>画像添付</button>
@@ -75,6 +80,12 @@ const NewQuestionPage = () => {
             dangerouslySetInnerHTML={{ __html: marked(content) }} // MarkdownをHTMLに変換して表示
           />
         </div>
+
+        {/* タグ選択コンポーネントの追加 */}
+        <div className={styles.inputGroup}>
+          <TagSelector selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
+        </div>
+
         <div className={styles.footer}>
           <Link href="/">
             <button type="button" className={styles.cancelButton}>キャンセル</button>
