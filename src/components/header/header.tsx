@@ -13,7 +13,6 @@ export default function Header() {
             <Link href="/search_question">
             <button className={styles.questionButton}>質問検索</button>
             </Link>
-            過去ログ
           </li>
           <li>使い方</li>
           <li>
