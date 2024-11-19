@@ -39,14 +39,7 @@ function QuestionContent({ question }: { question: any }) {
   return (
     <div className={styles.pageContainer}>
       <Header />
-      
       <div className={styles.container}>
-        <aside className={styles.sidebar}>
-          <p>タグ一覧</p>
-          {1.1}<br />
-          {1.2}<br />
-          {1.3}<br />
-        </aside>
 
         <main className={styles.main}>
           <div className={styles.questionSection}>

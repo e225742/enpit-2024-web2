@@ -1,4 +1,3 @@
-/* src/components/question/question.module.css */
 .pageContainer {
   display: flex;
   flex-direction: column;
@@ -11,16 +10,8 @@
   gap: 20px;
   padding: 20px;
   flex-grow: 1;
-  height: calc(100vh - 61px); /* headerの高さ(41px + border 1px + padding 20px)を引く */
+  height: calc(100vh - 61px);
   overflow: hidden;
-}
-
-.sidebar {
-  height: 100%;
-  overflow-y: auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-right: 1px solid #ddd;
 }
 
 .main {
