@@ -15,6 +15,7 @@ type Tag = {
 const NewQuestionPage = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [tags, setTags] = useState(''); // タグ入力用のステート
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]); // 選択されたタグの状態を追加
   const router = useRouter(); // ルーターをインスタンス化
 
@@ -55,13 +56,13 @@ const NewQuestionPage = () => {
         </div>
         <div className={styles.inputGroup}>
           <TagSelector selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
-          {/* <input
+          <input
             type="text"
             placeholder="タグをカンマ区切りで入力してください"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
             className={styles.input}
-          /> */}
+          />
         </div>
         <div className={styles.buttonGroup}>
           <button type="button" className={styles.imageButton}>画像添付</button>
