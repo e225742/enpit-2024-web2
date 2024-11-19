@@ -5,13 +5,22 @@ type Tag = {
   name: string;
 };
 
-const TagSelector = ({ selectedTags, setSelectedTags }: { selectedTags: Tag[]; setSelectedTags: (tags: Tag[]) => void }) => {
+const TagSelector = ({
+  selectedTags,
+  setSelectedTags,
+  isProcessing,
+  setIsProcessing,
+}: {
+  selectedTags: Tag[];
+  setSelectedTags: (tags: Tag[]) => void;
+  isProcessing: boolean;
+  setIsProcessing: (processing: boolean) => void;
+}) => {
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [query, setQuery] = useState('');
   const [filteredTags, setFilteredTags] = useState<Tag[]>([]);
-  const [confirmCreate, setConfirmCreate] = useState(false); // タグ作成の確認フラグ
+  const [confirmCreate, setConfirmCreate] = useState(false);
 
-  // タグ一覧を取得する
   useEffect(() => {
     const fetchTags = async () => {
       const response = await fetch('/api/get-tags');
@@ -23,25 +32,42 @@ const TagSelector = ({ selectedTags, setSelectedTags }: { selectedTags: Tag[]; s
     fetchTags();
   }, []);
 
-  // 入力に基づいてタグ候補をフィルタリング
   useEffect(() => {
     if (!query.trim()) {
       setFilteredTags([]);
-      setConfirmCreate(false); // クエリが空の場合、作成確認をリセット
+      setConfirmCreate(false); // 入力が空の場合、作成確認をリセット
     } else {
-      setFilteredTags(allTags.filter(tag => tag.name.includes(query) && !selectedTags.some(t => t.id === tag.id)));
+      setFilteredTags(
+        allTags.filter(tag => tag.name.includes(query) && !selectedTags.some(t => t.id === tag.id))
+      );
     }
   }, [query, allTags, selectedTags]);
 
-  // タグを選択したときの処理
-  const handleSelectTag = (tag: Tag) => {
-    setSelectedTags([...selectedTags, tag]);
-    setQuery(''); // 入力フィールドをクリア
-    setConfirmCreate(false); // 作成確認をリセット
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // フォーム送信を防止
+
+      if (isProcessing) return; // 処理中なら何もしない
+      if (!query.trim()) return; // 入力が空なら何もしない
+
+      const existingTag = allTags.find(tag => tag.name === query.trim());
+
+      if (existingTag) {
+        setSelectedTags([...selectedTags, existingTag]);
+        setQuery('');
+        setConfirmCreate(false);
+      } else if (!confirmCreate) {
+        setConfirmCreate(true); // 1回目のエンターで作成確認を有効化
+      } else {
+        handleCreateTag(query.trim()); // 2回目のエンターでタグを作成
+      }
+    }
   };
 
-  // 新しいタグを作成して選択する
   const handleCreateTag = async (name: string) => {
+    if (isProcessing) return; // 処理中なら無視
+
+    setIsProcessing(true); // 処理中を開始
     try {
       const response = await fetch('/api/create-tag', {
         method: 'POST',
@@ -53,39 +79,19 @@ const TagSelector = ({ selectedTags, setSelectedTags }: { selectedTags: Tag[]; s
         const newTag: Tag = await response.json();
         setAllTags([...allTags, newTag]); // 全タグリストに新しいタグを追加
         setSelectedTags([...selectedTags, newTag]); // 選択済みタグに新しいタグを追加
-        setQuery(''); // 入力フィールドをクリア
-        setConfirmCreate(false); // 作成確認をリセット
+        setQuery('');
       } else {
         console.error('Failed to create tag');
       }
     } catch (error) {
       console.error('Error creating tag:', error);
+    } finally {
+      setIsProcessing(false); // 処理終了
     }
   };
 
-  // エンターキーが押された時の処理
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault(); // フォーム送信を防止
-
-      if (!query.trim()) {
-        return; // 空白の場合は何もしない
-      }
-
-      const existingTag = allTags.find(tag => tag.name === query.trim());
-
-      if (existingTag) {
-        handleSelectTag(existingTag); // 既存タグを選択
-      } else if (!confirmCreate) {
-        setConfirmCreate(true); // 1回目のエンターで作成確認を有効化
-      } else {
-        handleCreateTag(query.trim()); // 2回目のエンターでタグを作成
-      }
-    }
-  };
-
-  // 選択したタグを削除する
   const handleRemoveTag = (tagId: number) => {
+    if (isProcessing) return; // 処理中なら何もしない
     setSelectedTags(selectedTags.filter(tag => tag.id !== tagId));
   };
 
@@ -94,7 +100,9 @@ const TagSelector = ({ selectedTags, setSelectedTags }: { selectedTags: Tag[]; s
       <div>
         {selectedTags.map(tag => (
           <span key={tag.id} style={{ margin: '0 5px', padding: '5px', border: '1px solid #ccc', borderRadius: '4px' }}>
-            {tag.name} <button onClick={() => handleRemoveTag(tag.id)}>×</button>
+            {tag.name} <button onClick={() => handleRemoveTag(tag.id)} disabled={isProcessing}>
+              ×
+            </button>
           </span>
         ))}
       </div>
@@ -102,13 +110,19 @@ const TagSelector = ({ selectedTags, setSelectedTags }: { selectedTags: Tag[]; s
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={handleKeyPress} // エンターキー検知
+        onKeyDown={handleKeyPress}
         placeholder="タグを入力してエンターを押してください"
+        disabled={isProcessing} // 処理中は入力を無効化
         style={{ width: '100%', padding: '8px', marginTop: '10px' }}
       />
-      {confirmCreate && (
+      {confirmCreate && !isProcessing && (
         <div style={{ color: 'red', marginTop: '5px' }}>
           「{query}」を新しいタグとして作成しますか？もう一度エンターを押してください。
+        </div>
+      )}
+      {isProcessing && (
+        <div style={{ color: 'blue', marginTop: '5px' }}>
+          タグを作成中です。しばらくお待ちください...
         </div>
       )}
       {filteredTags.length > 0 && (
@@ -116,7 +130,7 @@ const TagSelector = ({ selectedTags, setSelectedTags }: { selectedTags: Tag[]; s
           {filteredTags.map(tag => (
             <div
               key={tag.id}
-              onClick={() => handleSelectTag(tag)}
+              onClick={() => setSelectedTags([...selectedTags, tag])}
               style={{ padding: '8px', cursor: 'pointer' }}
             >
               {tag.name}
