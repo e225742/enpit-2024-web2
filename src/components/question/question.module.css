@@ -1,0 +1,137 @@
+/* src/components/question/question.module.css */
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 20px;
+  padding: 20px;
+  flex-grow: 1;
+  height: calc(100vh - 61px); /* headerの高さ(41px + border 1px + padding 20px)を引く */
+  overflow: hidden;
+}
+
+.sidebar {
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-right: 1px solid #ddd;
+}
+
+.main {
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.questionSection {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.questionTitle {
+  margin: 0 0 20px 0;
+  font-size: 1.8em;
+  color: #333;
+}
+
+.answerSection {
+  background-color: #fff;
+  padding: 20px;
+}
+
+.answerTitle {
+  margin: 0 0 20px 0;
+  font-size: 1.5em;
+  color: #444;
+}
+
+.answerForm {
+  margin-bottom: 30px;
+}
+
+.answerTextarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 1em;
+  resize: vertical;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 10px;
+}
+
+.submitButton, .reloadButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.submitButton {
+  background-color: #666;
+  color: white;
+}
+
+.submitButton:hover {
+  background-color: #555;
+}
+
+.reloadButton {
+  background-color: #ccc;
+  color: black;
+}
+
+.reloadButton:hover {
+  background-color: #bbb;
+}
+
+.answersContainer {
+  margin-top: 30px;
+}
+
+.existingAnswersTitle {
+  margin: 0 0 20px 0;
+  font-size: 1.3em;
+  color: #555;
+}
+
+.answerItem {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.markdownContent {
+  background-color: #e0e0e0;
+  padding: 15px;
+  border-radius: 3px;
+  line-height: 1.6;
+}
+
+.markdownContent p {
+  margin: 0 0 10px 0;
+}
+
+.markdownContent:last-child {
+  margin-bottom: 0;
+}

@@ -11,7 +11,14 @@
     margin: 0;
     font-size: 1.5rem;
     font-weight: bold;
+    text-decoration: none;
   }
+
+  .link {
+    text-decoration: none; /* リンクの下線を消す */
+    color: inherit; /* テキストの色を親要素から引き継ぐ */
+  }
+  
   
   .nav ul {
     display: flex;
