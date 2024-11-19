@@ -84,7 +84,7 @@
   border-radius: 0.25rem;
   resize: none;
   transition: all 0.3s ease;
-  padding: 3px;
+  padding: 5px;
 }
 
 .expandedTextarea {
@@ -131,3 +131,5 @@
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
 }
+
+/* 既存のスタイルは省略 */

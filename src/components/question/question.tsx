@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { marked } from 'marked';
 import { Maximize2, Minimize2 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -9,6 +10,7 @@ import Header from '@/components/header/header';
 import styles from './question.module.css';
 
 function QuestionContent({ question }: { question: any }) {
+  const router = useRouter(); // useRouterフックを取得
   const [answerContent, setAnswerContent] = useState('');
   const [answers, setAnswers] = useState(question.answers);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -18,16 +20,6 @@ function QuestionContent({ question }: { question: any }) {
     return format(dateObj, 'yyyy年MM月dd日 HH:mm', { locale: ja });
   };
 
-  const fetchAnswers = async () => {
-    const res = await fetch(`/api/questions/${question.id}/answers`);
-    const data = await res.json();
-    setAnswers(data);
-  };
-
-  useEffect(() => {
-    fetchAnswers();
-  }, [question.id]);
-
   const handleAnswerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -36,8 +28,6 @@ function QuestionContent({ question }: { question: any }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: answerContent, questionId: question.id }),
       });
-      const newAnswer = await res.json();
-      setAnswers((prevAnswers: any) => [...prevAnswers, newAnswer]);
       setAnswerContent('');
     } catch (err) {
       console.error('Error creating answer:', err);
@@ -108,7 +98,6 @@ function QuestionContent({ question }: { question: any }) {
             </button>
             <button
               type="button"
-              onClick={fetchAnswers}
               className={styles.reloadButton}
             >
               リロード
