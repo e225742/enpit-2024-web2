@@ -11,9 +11,15 @@ type Question = {
   isResolved: boolean;
 };
 
+type Tag = {
+  id: number;
+  name: string
+}
+
 type QuestionsTabProps = {
   questions: Question[];
   unresolvedQuestions: Question[];
+  tags: Tag[];
 };
 
 enum Tab {
@@ -21,7 +27,7 @@ enum Tab {
   UnresolvedQuestions = 'unresolved',
 }
 
-const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuestions }) => {
+const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuestions, tags }) => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.LatestQuestions);
 
   const handleTabClick = (tab: Tab) => {
@@ -51,11 +57,16 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
   return (
     <div className={styles.container}>
       <aside className={styles.sidebar}>
-        <p>タグ一覧</p>
-        {/* タグのリスト（ダミー表示） */}
-        {1.1}<br />
-        {1.2}<br />
-        {1.3}<br />
+      <p>タグ一覧</p>
+        {tags.length > 0 ? (
+          tags.map((tag) => (
+            <div key={tag.id}>
+              {tag.name}<br />
+            </div>
+          ))
+        ) : (
+          <p>タグがありません</p>
+        )}
       </aside>
 
       <main className={styles.main}>
