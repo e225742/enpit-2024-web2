@@ -56,13 +56,13 @@ const NewQuestionPage = () => {
         </div>
         <div className={styles.inputGroup}>
           <TagSelector selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
-          <input
+          {/* <input
             type="text"
             placeholder="タグをカンマ区切りで入力してください"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
             className={styles.input}
-          />
+          /> */}
         </div>
         <div className={styles.buttonGroup}>
           <button type="button" className={styles.imageButton}>画像添付</button>
