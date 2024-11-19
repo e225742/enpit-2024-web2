@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; // next/navigationを使用してリダイレクト
+import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import Link from 'next/link';
-import { marked } from 'marked'; // markedライブラリをインポート
-import TagSelector from '@/components/TagSelector'
+import { marked } from 'marked';
+import TagSelector from '@/components/TagSelector';
 
 type Tag = {
   id: number;
@@ -15,22 +15,30 @@ type Tag = {
 const NewQuestionPage = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [tags, setTags] = useState(''); // タグ入力用のステート
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]); // 選択されたタグの状態を追加
-  const router = useRouter(); // ルーターをインスタンス化
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false); // 質問作成中フラグ
+  const [isCreatingTag, setIsCreatingTag] = useState(false); // タグ作成中フラグ
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
+    if (isSubmittingQuestion) return; // 質問作成中なら何もしない
+
+    setIsSubmittingQuestion(true); // 質問作成中を設定
     try {
       const res = await fetch('/api/create-question', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title, content, tags: selectedTags.map(tag => tag.name),}), // タグを配列として送信
+        body: JSON.stringify({
+          title,
+          content,
+          tags: selectedTags.map(tag => tag.name),
+        }),
       });
-  
+
       if (res.ok) {
         router.push('/');
       } else {
@@ -38,8 +46,11 @@ const NewQuestionPage = () => {
       }
     } catch (err) {
       console.error('Error creating question:', err);
+    } finally {
+      setIsSubmittingQuestion(false); // 質問作成処理終了
     }
   };
+
 
   return (
     <div className={styles.container}>
@@ -52,17 +63,16 @@ const NewQuestionPage = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className={styles.input}
+            disabled={isSubmittingQuestion || isCreatingTag} // 質問作成中またはタグ作成中は無効化
           />
         </div>
         <div className={styles.inputGroup}>
-          <TagSelector selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
-          {/* <input
-            type="text"
-            placeholder="タグをカンマ区切りで入力してください"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            className={styles.input}
-          /> */}
+          <TagSelector 
+            selectedTags={selectedTags} 
+            setSelectedTags={setSelectedTags} 
+            isProcessing={isCreatingTag} // タグ作成中フラグを渡す
+            setIsProcessing={setIsCreatingTag} // タグ作成中フラグを更新
+          />
         </div>
         <div className={styles.buttonGroup}>
           <button type="button" className={styles.imageButton}>画像添付</button>
@@ -76,6 +86,7 @@ const NewQuestionPage = () => {
             placeholder="Markdown形式で質問内容を入力してください"
             rows={10}
             className={styles.textArea}
+            disabled={isSubmittingQuestion || isCreatingTag} // 質問作成中またはタグ作成中は無効化
           />
           <div
             className={styles.previewArea}
@@ -85,9 +96,11 @@ const NewQuestionPage = () => {
         
         <div className={styles.footer}>
           <Link href="/">
-            <button type="button" className={styles.cancelButton}>キャンセル</button>
+            <button type="button" className={styles.cancelButton} disabled={isSubmittingQuestion || isCreatingTag} >
+              キャンセル</button>
           </Link>
-          <button type="submit" className={styles.submitButton}>作成</button>
+          <button type="submit" className={styles.submitButton} disabled={isSubmittingQuestion || isCreatingTag} >
+          {isSubmittingQuestion ? '作成中...' : '作成'}</button>
         </div>
       </form>
     </div>
