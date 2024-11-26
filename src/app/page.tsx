@@ -12,6 +12,7 @@ type Question = {
   content: string;
   isResolved: boolean;
   createdAt: Date;
+  tags: Tag[]; // タグを追加
 };
 
 type Tag = {
@@ -24,6 +25,7 @@ async function fetchLatestQuestions(): Promise<Question[]> {
   return await prisma.question.findMany({
     orderBy: { createdAt: 'desc' },
     take: 10, // 必要に応じて最新10件だけ取得するなど制限可能
+    include: { tags: true }, // 質問に関連するタグも取得
   });
 }
 
@@ -31,6 +33,7 @@ async function fetchUnresolvedQuestions(): Promise<Question[]> {
   return await prisma.question.findMany({
     where: { isResolved: false },
     orderBy: { createdAt: 'desc' },
+    include: { tags: true }, // 質問に関連するタグも取得
   });
 }
 
@@ -62,7 +65,11 @@ export default async function Home() {
       </div>
 
       {/* タブコンポーネントにデータを渡す */}
-      <QuestionsTab questions={latestQuestions} unresolvedQuestions={unresolvedQuestions} tags={tags} />
+      <QuestionsTab
+        questions={latestQuestions}
+        unresolvedQuestions={unresolvedQuestions}
+        tags={tags}
+      />
     </div>
   );
 }

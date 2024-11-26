@@ -1,14 +1,18 @@
 "use client";
 import React, { useState } from 'react';
 import Link from 'next/link';
-import styles from '@/app/page.module.css';
 import { marked } from 'marked';
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import styles from '@/app/page.module.css';
 
 type Question = {
   id: number;
   title: string;
   content: string;
   isResolved: boolean;
+  createdAt: Date;
+  tags: Tag[]
 };
 
 type Tag = {
@@ -32,6 +36,11 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
     setActiveTab(tab);
   };
 
+  const formatDate = (date: Date) => {
+    const dateObj = new Date(date);
+    return format(dateObj, 'yyyy年MM月dd日 HH:mm', { locale: ja });
+  };
+
   const renderQuestions = (questions: Question[]) => (
     <div className={styles.question}>
       {questions.length > 0 ? (
@@ -40,6 +49,23 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
             <h2>
               <Link href={`/question/${question.id}`}>{question.title}</Link>
             </h2>
+            {/* 投稿日時とタグを横並びに表示するため、同じdivで囲む */}
+            <div className={styles.dateAndTags}>
+              <div className={styles.tagContainer}>
+                {question.tags && question.tags.length > 0 && (
+                  <span className={styles.tags}>
+                    {question.tags.map((tag) => (
+                      <span key={tag.id} className={styles.tag}>
+                        {tag.name}
+                      </span>
+                    ))}
+                  </span>
+                )}
+              </div>
+              <div className={styles.dateInfo}>
+                {formatDate(question.createdAt)}
+              </div>
+            </div>
             <div
               className={styles.markdownContent}
               dangerouslySetInnerHTML={{ __html: marked(question.content) }}
@@ -51,6 +77,8 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
       )}
     </div>
   );
+  
+  
 
   return (
     <div className={styles.container}>
