@@ -49,7 +49,8 @@
 }
 
 .question {
-  width: 1000px;
+  justify-content: center;
+  width: 95%;
   margin-bottom: 20px;
   padding: 20px;
   background-color: #fafafa; /* 背景色 */
@@ -63,19 +64,69 @@
   font-size: 1.5em; /* 見出しのサイズを大きく */
 }
 
-.question p {
-  margin: 10px 0;
-  background-color: #e0e0e0; /* 質問の背景色 */
-  padding: 10px; /* パディングを追加して読みやすく */
-  border-radius: 3px; /* 角を丸くする */
-}
-
 .questionItem {
   margin-bottom: 20px; /* 各質問の間の余白 */
   padding: 20px; /* 内側の余白 */
   background-color: #fafafa; /* 背景色 */
   border: 1px solid #ddd; /* 枠線の色と太さ */
   border-radius: 5px; /* 角を丸める（任意） */
+}
+
+/* リンクのスタイル */
+.questionItem a {
+  text-decoration: none;  /* 文字下の線を消す */
+  color: #0000FF;  /* リンクの色を青に設定 */
+}
+
+/* クリック後のリンクスタイルを設定（紫色になるのを防ぐ） */
+.questionItem a:visited {
+  color: #0000FF;  /* クリック後も青色にする */
+}
+
+/* リンクにホバーしたときの色を指定（オプション） */
+.questionItem a:hover {
+  color: #FF6347;  /* 例: ホバー時に色を変更（トマト色） */
+}
+
+/* リンクがフォーカスされた時のスタイル（オプション） */
+.questionItem a:focus {
+  outline: none;  /* フォーカス時のアウトラインを消す */
+  color: #FF6347;  /* 例: フォーカス時に色を変更 */
+}
+
+.dateAndTags {
+  display: flex; /* 横並びにする */
+  justify-content: space-between;
+  align-items: center; /* 垂直方向に中央寄せ */
+  margin: 15px 0;
+  font-size: 0.9rem;
+  color: #666;
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 1rem;
+}
+
+.dateInfo {
+  font-size: 12px;
+  color: #666;
+}
+
+.tags {
+  display: flex;
+}
+
+.tag {
+  background-color: #efefef;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin: 4px;
+  font-size: 12px;
+  color: #333;
+}
+
+/* タグにホバーしたときの色変更 */
+.tag:hover {
+  background-color: #ddd;
+  cursor: pointer;
 }
 
 .introSection {

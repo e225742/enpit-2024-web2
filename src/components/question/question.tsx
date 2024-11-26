@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import { marked } from 'marked';
 import { Maximize2, Minimize2 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -9,8 +8,7 @@ import { ja } from 'date-fns/locale';
 import Header from '@/components/header/header';
 import styles from './question.module.css';
 
-function QuestionContent({ question }: { question: any }) {
-  const router = useRouter(); // useRouterフックを取得
+function QuestionContent({ question }: { question: any }) {  
   const [answerContent, setAnswerContent] = useState('');
   const [answers, setAnswers] = useState(question.answers);
   const [isExpanded, setIsExpanded] = useState(false);
