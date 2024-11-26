@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./page.module.css";
 import TagSelector from "@/components/TagSelector";
+import Header from '@/components/header/header';
 
 type Tag = {
   id: number;
@@ -52,13 +53,9 @@ const SearchPage: React.FC = () => {
   };
   
 
-  useEffect(() => {
-    fetchQuestions();
-  }, [status, selectedTags]);
-
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>OS課題相談広場</h1>
+    <div className={styles.pageContainer}>
+      <Header />
       <div className={styles.searchContainer}>
         <textarea
           placeholder="キーワードを入力してください（任意）"
