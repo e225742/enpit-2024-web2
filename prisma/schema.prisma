@@ -1,33 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model Question {
-  id          Int      @id @default(autoincrement())
-  title       String
-  content     String
-  createdAt   DateTime @default(now())
-  answers     Answer[] // 質問に対する回答のリレーション
-  tags        Tag[]    @relation("QuestionTags") // 質問に関連するタグのリレーション
-  isResolved  Boolean  @default(false) // 解決状態を示すフィールド
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  createdAt  DateTime @default(now())
+  isResolved Boolean  @default(false)
+  answers    Answer[]
+  tags       Tag[]    @relation("QuestionTags")
 }
 
 model Answer {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
-  question  Question @relation(fields: [questionId], references: [id])
+  id         Int      @id @default(autoincrement())
+  content    String
+  createdAt  DateTime @default(now())
   questionId Int
+  question   Question @relation(fields: [questionId], references: [id])
 }
 
 model Tag {
   id        Int        @id @default(autoincrement())
-  name      String     @unique // タグ名
-  questions Question[] @relation("QuestionTags") // タグに関連する質問のリレーション
-
+  name      String     @unique
+  questions Question[] @relation("QuestionTags")
 }
