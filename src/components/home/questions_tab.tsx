@@ -13,8 +13,8 @@ type Question = {
 
 type Tag = {
   id: number;
-  name: string
-}
+  name: string;
+};
 
 type QuestionsTabProps = {
   questions: Question[];
@@ -22,13 +22,11 @@ type QuestionsTabProps = {
   tags: Tag[];
 };
 
-enum Tab {
-  LatestQuestions = 'latest',
-  UnresolvedQuestions = 'unresolved',
-}
+// タブの状態を表す文字列リテラル型を定義
+type Tab = 'latest' | 'unresolved';
 
 const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuestions, tags }) => {
-  const [activeTab, setActiveTab] = useState<Tab>(Tab.LatestQuestions);
+  const [activeTab, setActiveTab] = useState<Tab>('latest'); // デフォルトで 'latest' を選択
 
   const handleTabClick = (tab: Tab) => {
     setActiveTab(tab);
@@ -49,7 +47,7 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
           </div>
         ))
       ) : (
-        <p>{activeTab === Tab.LatestQuestions ? '質問はまだありません。' : '未解決の質問はありません。'}</p>
+        <p>{activeTab === 'latest' ? '質問はまだありません。' : '未解決の質問はありません。'}</p>
       )}
     </div>
   );
@@ -57,11 +55,12 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
   return (
     <div className={styles.container}>
       <aside className={styles.sidebar}>
-      <p>タグ一覧</p>
+        <p>タグ一覧</p>
         {tags.length > 0 ? (
           tags.map((tag) => (
             <div key={tag.id}>
-              {tag.name}<br />
+              {tag.name}
+              <br />
             </div>
           ))
         ) : (
@@ -72,22 +71,22 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
       <main className={styles.main}>
         <div className={styles.tabs}>
           <button
-            className={activeTab === Tab.LatestQuestions ? styles.activeTab : styles.inactiveTab}
-            onClick={() => handleTabClick(Tab.LatestQuestions)}
+            className={activeTab === 'latest' ? styles.activeTab : styles.inactiveTab}
+            onClick={() => handleTabClick('latest')}
           >
             最新の質問
           </button>
           <button
-            className={activeTab === Tab.UnresolvedQuestions ? styles.activeTab : styles.inactiveTab}
-            onClick={() => handleTabClick(Tab.UnresolvedQuestions)}
+            className={activeTab === 'unresolved' ? styles.activeTab : styles.inactiveTab}
+            onClick={() => handleTabClick('unresolved')}
           >
             未解決の質問
           </button>
         </div>
 
         <div className={styles.tabContent}>
-          {activeTab === Tab.LatestQuestions && renderQuestions(questions)}
-          {activeTab === Tab.UnresolvedQuestions && renderQuestions(unresolvedQuestions)}
+          {activeTab === 'latest' && renderQuestions(questions)}
+          {activeTab === 'unresolved' && renderQuestions(unresolvedQuestions)}
         </div>
       </main>
     </div>
