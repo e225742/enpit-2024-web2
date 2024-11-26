@@ -1,9 +1,14 @@
+"use client";
 import styles from './header.module.css';
 import Link from 'next/link';
+import Head from 'next/head'; 
 
 export default function Header() {
   return (
-    <header className={styles.header}>
+    <div className={styles.header}>
+      <Head>
+        <title>OS課題相談広場</title>
+      </Head>
       <div className={styles.left}>
         <h1>
           <Link href="/" className={styles.link}>
@@ -26,6 +31,6 @@ export default function Header() {
           </li>
         </ul>
       </nav>
-    </header>
+    </div>
   );
 }

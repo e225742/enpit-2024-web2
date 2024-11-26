@@ -1,24 +1,24 @@
-// src/components/question/question.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import styles from './question.module.css';
+import { useRouter } from 'next/navigation';
 import { marked } from 'marked';
+import { Maximize2, Minimize2 } from 'lucide-react';
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
 import Header from '@/components/header/header';
+import styles from './question.module.css';
 
 function QuestionContent({ question }: { question: any }) {
+  const router = useRouter(); // useRouterフックを取得
   const [answerContent, setAnswerContent] = useState('');
   const [answers, setAnswers] = useState(question.answers);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  const fetchAnswers = async () => {
-    const res = await fetch(`/api/questions/${question.id}/answers`);
-    const data = await res.json();
-    setAnswers(data);
+  const formatDate = (date: string | Date) => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return format(dateObj, 'yyyy年MM月dd日 HH:mm', { locale: ja });
   };
-
-  useEffect(() => {
-    fetchAnswers();
-  }, [question.id]);
 
   const handleAnswerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,70 +28,82 @@ function QuestionContent({ question }: { question: any }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: answerContent, questionId: question.id }),
       });
-      const newAnswer = await res.json();
-      setAnswers((prevAnswers: any) => [...prevAnswers, newAnswer]);
       setAnswerContent('');
     } catch (err) {
       console.error('Error creating answer:', err);
     }
   };
 
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
-    <div className={styles.pageContainer}>
+    <div className={styles.container}>
       <Header />
-      
-      <div className={styles.container}>
-        <aside className={styles.sidebar}>
-          <p>タグ一覧</p>
-          {1.1}<br />
-          {1.2}<br />
-          {1.3}<br />
-        </aside>
-
-        <main className={styles.main}>
-          <div className={styles.questionSection}>
-            <h1 className={styles.questionTitle}>{question.title}</h1>
-            <div 
-              className={styles.markdownContent}
-              dangerouslySetInnerHTML={{ __html: marked(question.content) }}
-            />
+      <div className={`${styles.mainContent} ${isExpanded ? styles.shrinkContent : ''}`}>
+        <h3>質問</h3>
+        <div className={styles.question}>
+          <div className={styles.questionHeader}>
+            <h2>{question.title}</h2>
+            <span className={styles.dateInfo}>
+              投稿日時: {formatDate(question.createdAt)}
+            </span>
           </div>
+          <div className={styles.content}>
+            <div dangerouslySetInnerHTML={{ __html: marked(question.content) }} />
+          </div>
+        </div>
 
-          <div className={styles.answerSection}>
-            <h2 className={styles.answerTitle}>回答</h2>
-            <form onSubmit={handleAnswerSubmit} className={styles.answerForm}>
-              <textarea
-                value={answerContent}
-                onChange={(e) => setAnswerContent(e.target.value)}
-                placeholder="回答を入力してください"
-                rows={4}
-                className={styles.answerTextarea}
-              />
-              <div className={styles.buttonContainer}>
-                <button type="submit" className={styles.submitButton}>回答を投稿</button>
-                <button 
-                  type="button" 
-                  onClick={fetchAnswers}
-                  className={styles.reloadButton}
-                >
-                  リロード
-                </button>
+        <div className={styles.answers}>
+          <h3>回答 ({answers.length}件)</h3>
+          {answers.map((answer: any) => (
+            <div key={answer.id} className={styles.answer}>
+              <div className={styles.answerHeader}>
+                <span className={styles.dateInfo}>
+                  回答日時: {formatDate(answer.createdAt)}
+                </span>
               </div>
-            </form>
-
-            <div className={styles.answersContainer}>
-              <h3 className={styles.existingAnswersTitle}>既存の回答</h3>
-              {answers.map((answer: any) => (
-                <div key={answer.id} className={styles.answerItem}>
-                  <div
-                    className={styles.markdownContent}
-                    dangerouslySetInnerHTML={{ __html: marked(answer.content) }}
-                  />
-                </div>
-              ))}
+              <div className={styles.content}>
+                <div dangerouslySetInnerHTML={{ __html: marked(answer.content) }} />
+              </div>
             </div>
+          ))}
+        </div>
+      </div>
+
+      <div className={`${styles.answerFormContainer} ${isExpanded ? styles.expanded : ''}`}>
+        <div className={styles.expandToggle}>
+          <button
+            type="button"
+            onClick={toggleExpand}
+            className={styles.expandButton}
+          >
+            {isExpanded ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+            {isExpanded ? '縮小' : '拡大'}
+          </button>
+        </div>
+        
+        <form className={styles.answerForm} onSubmit={handleAnswerSubmit}>
+          <textarea
+            value={answerContent}
+            onChange={(e) => setAnswerContent(e.target.value)}
+            placeholder="回答を入力してください"
+            className={`${styles.answerTextarea} ${isExpanded ? styles.expandedTextarea : ''}`}
+            rows={isExpanded ? 15 : 3}
+          />
+          <div className={styles.buttonContainer}>
+            <button type="submit" className={styles.submitButton}>
+              回答を投稿
+            </button>
+            <button
+              type="button"
+              className={styles.reloadButton}
+            >
+              リロード
+            </button>
           </div>
-        </main>
+        </form>
       </div>
     </div>
   );

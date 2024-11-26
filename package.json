@@ -11,6 +11,8 @@
     "prisma:seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.460.0",
     "marked": "^14.1.2",
     "next": "14.2.13",
     "react": "^18",
