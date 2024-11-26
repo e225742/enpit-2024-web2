@@ -52,10 +52,6 @@ const SearchPage: React.FC = () => {
   };
   
 
-  useEffect(() => {
-    fetchQuestions();
-  }, [status, selectedTags]);
-
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>OS課題相談広場</h1>
