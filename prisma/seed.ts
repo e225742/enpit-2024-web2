@@ -10,6 +10,8 @@ async function main() {
     { name: 'kadai1.1' },
     { name: 'kadai2' },
     { name: 'kadai3' },
+    { name: 'kadai4' },
+    { name: 'kadai5' },
   ];
 
   for (const tag of tags) {
