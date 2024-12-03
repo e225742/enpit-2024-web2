@@ -12,6 +12,7 @@ function QuestionContent({ question }: { question: any }) {
   const [answerContent, setAnswerContent] = useState('');
   const [answers, setAnswers] = useState(question.answers);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isResolved, setIsResolved] = useState(question.isResolved);
 
   const formatDate = (date: string | Date) => {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
@@ -36,11 +37,41 @@ function QuestionContent({ question }: { question: any }) {
     setIsExpanded(!isExpanded);
   };
 
+  const markAsResolved = async () => {
+    try {
+      const response = await fetch(`/api/close_question/${question.id}`, {
+        method: "PATCH",
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("APIレスポンス:", result);
+
+        // 状態を更新
+        setIsResolved(true);
+      } else {
+        const errorText = await response.text();
+        console.error("APIエラー:", errorText);
+      }
+    } catch (error) {
+      console.error("ネットワークエラー:", error);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <Header />
       <div className={`${styles.mainContent} ${isExpanded ? styles.shrinkContent : ''}`}>
-        <h3>質問</h3>
+        <div className={styles.headerRow}>
+          <h3>質問</h3>
+          <button
+            onClick={markAsResolved}
+            disabled={isResolved}
+            className={styles.resolveButton}
+          >
+            {isResolved ? "解決済み" : "解決済みにする"}
+          </button>
+        </div>
         <div className={styles.question}>
           <div className={styles.questionHeader}>
             <h2>{question.title}</h2>
