@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { marked } from 'marked';
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
 import styles from "./page.module.css";
 import TagSelector from "@/components/TagSelector";
 import Header from '@/components/header/header';
@@ -18,6 +21,11 @@ type Question = {
   createdAt: string;
   isResolved: boolean;
   tags: Tag[];
+};
+
+const formatDate = (date: string) => {
+  const dateObj = new Date(date);
+  return format(dateObj, 'yyyy年MM月dd日 HH:mm', { locale: ja });
 };
 
 const SearchPage: React.FC = () => {
@@ -113,18 +121,39 @@ const SearchPage: React.FC = () => {
         ) : questions.length > 0 ? (
           questions.map((question) => (
             <div key={question.id} className={styles.questionItem}>
-              <h3>
+              <h3 className={styles.questionTitle}>
                 <Link href={`/question/${question.id}`}>{question.title}</Link>
               </h3>
-              <p>{question.content}</p>
-              <p>
-                <strong>タグ:</strong>{" "}
-                {question.tags.map((tag) => tag.name).join(", ")}
-              </p>
-              <p>
-                <strong>ステータス:</strong>{" "}
-                {question.isResolved ? "解決済" : "未解決"}
-              </p>
+              {/* 投稿日時とタグを横並びに表示するため、同じdivで囲む */}
+              <div className={styles.dateAndTags}>
+                {/* タグ一覧を一行で表示 */}
+                <div className={styles.tagContainer}>
+                  <span className={styles.tags}>
+                    {/* 解決状態のタグ */}
+                    <span className={styles.tag} style={{ color: question.isResolved ? 'green' : 'red' }}>
+                      {question.isResolved ? "解決済み" : "未解決"}
+                    </span>
+
+                    {/* 質問に関連するタグ */}
+                    {question.tags && question.tags.length > 0 &&
+                      question.tags.map((tag) => (
+                        <span key={tag.id} className={styles.tag}>
+                          {tag.name}
+                        </span>
+                      ))
+                    }
+                  </span>
+                </div>
+
+                {/* 投稿日時 */}
+                <div className={styles.dateInfo}>
+                  {formatDate(question.createdAt)}
+                </div>
+              </div>
+              <div
+                className={styles.markdownContent}
+                dangerouslySetInnerHTML={{ __html: marked(question.content) }}
+              />
             </div>
           ))
         ) : (
