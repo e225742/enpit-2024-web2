@@ -26,8 +26,12 @@ const SearchPage: React.FC = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);
 
+  //初回表示用のフラグ
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   const fetchQuestions = async () => {
     setLoading(true);
+
     try {
       const queryParams = new URLSearchParams();
   
@@ -50,6 +54,7 @@ const SearchPage: React.FC = () => {
       console.error(error);
     } finally {
       setLoading(false);
+      setIsInitialLoad(false);
     }
   };
   
@@ -102,11 +107,14 @@ const SearchPage: React.FC = () => {
       </div>
 
       <div className={styles.questionList}>
-        {questions.length > 0 ? (
+        {/* 初回表示時に分岐 */}
+        {isInitialLoad ? (
+          <p>キーワードやタグを入力してください。</p>
+        ) : questions.length > 0 ? (
           questions.map((question) => (
             <div key={question.id} className={styles.questionItem}>
               <h3>
-              <Link href={`/question/${question.id}`}>{question.title}</Link>
+                <Link href={`/question/${question.id}`}>{question.title}</Link>
               </h3>
               <p>{question.content}</p>
               <p>
