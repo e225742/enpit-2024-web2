@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import styles from "./page.module.css";
 import TagSelector from "@/components/TagSelector";
 import Header from '@/components/header/header';
@@ -104,7 +105,9 @@ const SearchPage: React.FC = () => {
         {questions.length > 0 ? (
           questions.map((question) => (
             <div key={question.id} className={styles.questionItem}>
-              <h3>{question.title}</h3>
+              <h3>
+              <Link href={`/question/${question.id}`}>{question.title}</Link>
+              </h3>
               <p>{question.content}</p>
               <p>
                 <strong>タグ:</strong>{" "}
