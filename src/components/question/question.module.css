@@ -10,6 +10,28 @@
   transition: all 0.3s ease;
 }
 
+.headerRow {
+  display: flex;
+  justify-content: space-between; /* 左右に要素を配置 */
+  align-items: center;           /* 縦方向の中央揃え */
+  margin-bottom: 16px;           /* 適切なマージンを設定 */
+}
+
+.resolveButton {
+  padding: 8px 12px;
+  font-size: 14px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.resolveButton:disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
 .shrinkContent {
   max-height: 50vh;
   overflow-y: auto;

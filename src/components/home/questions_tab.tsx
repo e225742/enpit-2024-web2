@@ -51,17 +51,26 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
             </h2>
             {/* 投稿日時とタグを横並びに表示するため、同じdivで囲む */}
             <div className={styles.dateAndTags}>
+              {/* タグ一覧を一行で表示 */}
               <div className={styles.tagContainer}>
-                {question.tags && question.tags.length > 0 && (
-                  <span className={styles.tags}>
-                    {question.tags.map((tag) => (
+                <span className={styles.tags}>
+                  {/* 解決状態のタグ */}
+                  <span className={styles.tag} style={{ color: question.isResolved ? 'green' : 'red' }}>
+                    {question.isResolved ? "解決済み" : "未解決"}
+                  </span>
+
+                  {/* 質問に関連するタグ */}
+                  {question.tags && question.tags.length > 0 &&
+                    question.tags.map((tag) => (
                       <span key={tag.id} className={styles.tag}>
                         {tag.name}
                       </span>
-                    ))}
-                  </span>
-                )}
+                    ))
+                  }
+                </span>
               </div>
+
+              {/* 投稿日時 */}
               <div className={styles.dateInfo}>
                 {formatDate(question.createdAt)}
               </div>
