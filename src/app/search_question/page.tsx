@@ -14,6 +14,8 @@ type Tag = {
   name: string;
 };
 
+type IsResolved = boolean;
+
 type Question = {
   id: number;
   title: string;
@@ -31,6 +33,7 @@ const formatDate = (date: string) => {
 const SearchPage: React.FC = () => {
   const [status, setStatus] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [selectedIsResolved, setSelectedIsResolved] = useState<IsResolved>(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -49,6 +52,11 @@ const SearchPage: React.FC = () => {
           'tag',
           selectedTags.map((tag) => tag.name).join(',')
         );
+      }
+
+
+      if (selectedIsResolved !== null) {
+        queryParams.set('isResolved', selectedIsResolved.toString()); // selectedIsResolvedを使用
       }
   
       const res = await fetch(`/api/get-questions?${queryParams.toString()}`);
@@ -89,9 +97,9 @@ const SearchPage: React.FC = () => {
             <input
               type="radio"
               name="status"
-              value="resolved"
-              checked={status === "resolved"}
-              onChange={() => setStatus("resolved")}
+              value="true"
+              checked={selectedIsResolved === true}
+              onChange={() => setSelectedIsResolved(true)} //IsResolvedを解決に変更
               disabled={loading}
             />
             解決済
@@ -100,9 +108,9 @@ const SearchPage: React.FC = () => {
             <input
               type="radio"
               name="status"
-              value="unresolved"
-              checked={status === "unresolved"}
-              onChange={() => setStatus("unresolved")}
+              value="false"
+              checked={selectedIsResolved === false}
+              onChange={() => setSelectedIsResolved(false)}
               disabled={loading}
             />
             未解決
