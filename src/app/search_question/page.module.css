@@ -52,3 +52,11 @@
 .questionItem:hover {
     background-color: #d0d0d0;
 }
+
+.questionImage {
+    max-width: 20%; /* 横幅を親要素に収める */
+    height: auto;    /* 縦横比を維持 */
+    border-radius: 5px; /* 見た目を整える */
+    margin-top: 10px; /* 画像とテキストの間隔 */
+  }
+  

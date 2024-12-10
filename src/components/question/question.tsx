@@ -50,6 +50,13 @@ function QuestionContent({ question }: { question: any }) {
               投稿日時: {formatDate(question.createdAt)}
             </span>
           </div>
+          {question.image && (
+            <img
+              src={question.image}
+              alt="Question Image"
+              className={styles.questionImage} // 必要に応じてCSSを追加
+            />
+          )}
           <div className={styles.content}>
             <div dangerouslySetInnerHTML={{ __html: marked(question.content) }} />
           </div>

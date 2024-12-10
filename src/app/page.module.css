@@ -91,3 +91,10 @@
   border-radius: 3px;
   line-height: 1.6; /* 行間を広げて読みやすく */
 }
+
+.questionImage {
+  max-width: 40%; /* 横幅を親要素に収める */
+  height: auto;    /* 縦横比を維持 */
+  border-radius: 5px; /* 見た目を整える */
+  margin-top: 10px; /* 画像とテキストの間隔 */
+}

@@ -18,27 +18,36 @@ const NewQuestionPage = () => {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false); // 質問作成中フラグ
   const [isCreatingTag, setIsCreatingTag] = useState(false); // タグ作成中フラグ
+  const [image, setImage] = useState<string | null>(null); // 選択された画像のプレビューURL
   const router = useRouter();
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImage(reader.result as string); // Base64形式のデータを保存
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (isSubmittingQuestion) return; // 質問作成中なら何もしない
-
-    setIsSubmittingQuestion(true); // 質問作成中を設定
+  
+    setIsSubmittingQuestion(true);
     try {
       const res = await fetch('/api/create-question', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title,
           content,
-          tags: selectedTags.map(tag => tag.name),
+          tags: selectedTags.map((tag) => tag.name),
+          image, // Base64形式の画像を送信
         }),
       });
-
+  
       if (res.ok) {
         router.push('/');
       } else {
@@ -47,10 +56,10 @@ const NewQuestionPage = () => {
     } catch (err) {
       console.error('Error creating question:', err);
     } finally {
-      setIsSubmittingQuestion(false); // 質問作成処理終了
+      setIsSubmittingQuestion(false);
     }
   };
-
+  
 
   return (
     <div className={styles.container}>
@@ -75,7 +84,16 @@ const NewQuestionPage = () => {
           />
         </div>
         <div className={styles.buttonGroup}>
-          <button type="button" className={styles.imageButton}>画像添付</button>
+          <label className={styles.imageButton}>
+            画像添付
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: 'none' }} // ボタンを隠す
+              disabled={isSubmittingQuestion || isCreatingTag} // 質問作成中またはタグ作成中は無効化
+            />
+          </label>
           <button type="button" className={styles.editButton}>エディタ</button>
           <button type="button" className={styles.previewButton}>プレビュー</button>
         </div>
@@ -93,6 +111,13 @@ const NewQuestionPage = () => {
             dangerouslySetInnerHTML={{ __html: marked(content) }} // MarkdownをHTMLに変換して表示
           />
         </div>
+
+        {/* プレビュー画像 */}
+        {image && (
+          <div className={styles.imagePreview}>
+            <img src={image} alt="Preview" />
+          </div>
+        )}
         
         <div className={styles.footer}>
           <Link href="/">

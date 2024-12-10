@@ -132,4 +132,11 @@
   border-radius: 0.25rem;
 }
 
+.questionImage {
+  max-width: 50%; /* 横幅を親要素に収める */
+  height: auto;    /* 縦横比を維持 */
+  border-radius: 5px; /* 見た目を整える */
+  margin-top: 10px; /* 画像とテキストの間隔 */
+}
+
 /* 既存のスタイルは省略 */

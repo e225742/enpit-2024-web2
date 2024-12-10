@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./page.module.css";
 import TagSelector from "@/components/TagSelector";
 import Header from '@/components/header/header';
+import { marked } from 'marked';
 
 type Tag = {
   id: number;
@@ -17,6 +18,7 @@ type Question = {
   createdAt: string;
   isResolved: boolean;
   tags: Tag[];
+  image: string;
 };
 
 const SearchPage: React.FC = () => {
@@ -105,7 +107,19 @@ const SearchPage: React.FC = () => {
           questions.map((question) => (
             <div key={question.id} className={styles.questionItem}>
               <h3>{question.title}</h3>
-              <p>{question.content}</p>
+
+              {question.image && (
+                <img
+                  src={question.image}
+                  alt="Question Image"
+                  className={styles.questionImage} // 必要に応じてCSSを追加
+                />
+              )}
+              <div
+                className={styles.markdownContent}
+                dangerouslySetInnerHTML={{ __html: marked(question.content) }}
+              />
+
               <p>
                 <strong>タグ:</strong>{" "}
                 {question.tags.map((tag) => tag.name).join(", ")}

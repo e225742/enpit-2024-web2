@@ -11,6 +11,7 @@ model Question {
   id         Int      @id @default(autoincrement())
   title      String
   content    String
+  image      String?
   createdAt  DateTime @default(now())
   isResolved Boolean  @default(false)
   answers    Answer[]
@@ -20,6 +21,7 @@ model Question {
 model Answer {
   id         Int      @id @default(autoincrement())
   content    String
+  image      String?
   createdAt  DateTime @default(now())
   questionId Int
   question   Question @relation(fields: [questionId], references: [id])

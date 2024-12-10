@@ -9,6 +9,7 @@ type Question = {
   title: string;
   content: string;
   isResolved: boolean;
+  image: string;
 };
 
 type Tag = {
@@ -42,6 +43,13 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
             <h2>
               <Link href={`/question/${question.id}`}>{question.title}</Link>
             </h2>
+            {question.image && (
+              <img
+                src={question.image}
+                alt="Question Image"
+                className={styles.questionImage} // 必要に応じてCSSを追加
+              />
+            )}
             <div
               className={styles.markdownContent}
               dangerouslySetInnerHTML={{ __html: marked(question.content) }}
