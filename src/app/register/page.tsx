@@ -1,11 +1,13 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter(); // useRouterフックを使用
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,8 +18,7 @@ export default function Register() {
     });
     const data = await res.json();
     if (data.message) {
-      alert("Registration successful!");
-      // ログインページへ遷移などの処理
+      router.push("/"); // 成功時にトップページへ遷移
     } else {
       alert(data.error);
     }
@@ -50,7 +51,7 @@ export default function Register() {
         <button type="submit">登録</button>
       </form>
       <Link href="/login">
-        <button className="link-button" type="button">
+        <button className={styles["link-button"]} type="button">
           既にアカウントをお持ちですか？ログイン
         </button>
       </Link>

@@ -7,7 +7,7 @@ import styles from "./page.module.css";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
+  const router = useRouter(); // useRouterフックを使用
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +19,7 @@ export default function Login() {
     const data = await res.json();
     if (res.ok && data.token) {
       localStorage.setItem("token", data.token);
-      alert("ログインに成功しました！");
+      // ログイン成功時にトップページへ遷移
       router.push("/");
     } else {
       alert(data.error || "ログインに失敗しました。");
