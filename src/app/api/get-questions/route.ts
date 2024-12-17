@@ -14,12 +14,18 @@ export async function GET(req: Request) {
   try {
     const questions = await prisma.question.findMany({
       where: {
-
         //キーワードでフィルタリング（部分一致OK）
-        title: {
-          contains: keyword, // 部分一致検索
-          mode: 'insensitive', // 大文字小文字を区別しない（PostgreSQLの場合）
-        },
+        OR: [
+          { title: { contains: keyword, mode: 'insensitive' } },
+          { content: { contains: keyword, mode: 'insensitive' } },
+          {
+            answers: {
+              some: {
+                content: { contains: keyword, mode: 'insensitive' },
+              },
+            },
+          },
+        ],
 
         // タグフィルタリング
         tags: tagNames.length > 0
