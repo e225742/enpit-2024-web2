@@ -1,0 +1,115 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f0f0f0; /* 全体背景色 */
+}
+
+.wrapper {
+  flex: 1;
+  width: 90%;         /* 画面幅の90%を基準にすることで伸縮 */
+  max-width: 1200px;  /* 必要なら最大幅を設定（任意） */
+  margin: 0 auto; 
+  padding: 20px;
+}
+
+.h3 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 1.4em;
+}
+
+/* 質問一覧を中央に配置 */
+.question {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 要素を横方向中央寄せ */
+}
+
+.questionItem {
+  width: 90%;         /* 親要素の幅に合わせて100%で伸縮 */
+  /* max-width: 800px; ←これを削除 */
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #fff; 
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.questionItem h2 {
+  margin-top: 0;
+  font-size: 1.5em;
+  color: #0000FF;
+}
+
+/* リンク */
+.questionItem a {
+  text-decoration: none;
+  color: #0000FF;
+}
+.questionItem a:hover {
+  color: #FF6347;
+}
+
+/* 日付とタグ */
+.dateAndTags {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
+  font-size: 0.9rem;
+  color: #666;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 10px;
+}
+
+.dateInfo {
+  font-size: 12px;
+  color: #666;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag {
+  background-color: #efefef;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #333;
+}
+
+.tag:hover {
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+/* 本文 */
+.markdownContent {
+  background-color: #e0e0e0;
+  padding: 10px;
+  border-radius: 3px;
+  line-height: 1.6;
+  margin-top: 15px;
+}
+
+/* 戻るボタン */
+.backButton {
+  display: block;
+  margin: 30px auto 0 auto;
+  padding: 10px 20px;
+  border: none;
+  background: #333;
+  color: #fff;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.backButton:hover {
+  background: #555;
+}
