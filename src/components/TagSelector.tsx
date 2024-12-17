@@ -126,7 +126,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
         onKeyDown={handleKeyPress}
         placeholder="タグを選択してください"
         disabled={isProcessing}
-        style={{ width: "100%", padding: "8px", marginTop: "10px" }}
+        style={{ width: "100%", padding: "8px", marginTop: "5px", marginBottom: "10px", border: "solid 0.5px" }}
       />
       {confirmCreate && allowTagCreation && (
         <div style={{ color: "red", marginTop: "5px" }}>
