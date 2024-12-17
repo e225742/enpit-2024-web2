@@ -17,57 +17,48 @@ export default function Register() {
       body: JSON.stringify({ email, password }),
     });
     const data = await res.json();
-    if (res.ok && data.message) {
-      // 登録成功時にログインを行う
-      const loginRes = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const loginData = await loginRes.json();
-      if (loginRes.ok && loginData.token) {
-        localStorage.setItem("token", loginData.token);
-        alert("登録 & ログインに成功しました！");
-        router.push("/");
-      } else {
-        alert(loginData.error || "登録は成功しましたが、ログインに失敗しました。");
-      }
+
+    if (res.ok && data.token) {
+      localStorage.setItem("token", data.token);
+      router.push("/");
     } else {
-      alert(data.error);
+      alert(data.error || "登録に失敗しました。");
     }
   };
 
   return (
-    <div className={styles["auth-container"]}>
-      <h1>新規ユーザー登録</h1>
-      <p>アカウントを作成し、サービスを利用しましょう。</p>
-      <form onSubmit={handleRegister}>
-        <input
-          type="email"
-          name="email"
-          autoComplete="username"
-          placeholder="メールアドレス"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          autoComplete="new-password"
-          placeholder="パスワード（8文字以上）"
-          minLength={8}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">登録</button>
-      </form>
-      <Link href="/login">
-        <button className={styles["link-button"]} type="button">
-          既にアカウントをお持ちですか？ログイン
-        </button>
-      </Link>
+    <div className={styles.pageRoot}>
+      <div className={styles["auth-container"]}>
+        <h1>新規ユーザー登録</h1>
+        <p>アカウントを作成し、サービスを利用しましょう。</p>
+        <form onSubmit={handleRegister}>
+          <input
+            type="email"
+            name="email"
+            autoComplete="username"
+            placeholder="メールアドレス"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            autoComplete="new-password"
+            placeholder="パスワード（8文字以上）"
+            minLength={8}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit">登録</button>
+        </form>
+        <Link href="/login">
+          <button className={styles["link-button"]} type="button">
+            既にアカウントをお持ちですか？ログイン
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }

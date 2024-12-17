@@ -27,33 +27,35 @@ export default function Login() {
   };
 
   return (
-    <div className={styles["auth-container"]}>
-      <h1>ログイン</h1>
-      <p>登録済みのアカウントでログインしてください。</p>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          name="email"
-          placeholder="メールアドレス"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="パスワード"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">ログイン</button>
-      </form>
-      <Link href="/register">
-        <button className={styles["link-button"]} type="button">
-          アカウントをお持ちでない場合はこちら
-        </button>
-      </Link>
+    <div className={styles.pageRoot}>
+      <div className={styles["auth-container"]}>
+        <h1>ログイン</h1>
+        <p>登録済みのアカウントでログインしてください。</p>
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            name="email"
+            placeholder="メールアドレス"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="パスワード"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit">ログイン</button>
+        </form>
+        <Link href="/register">
+          <button className={styles["link-button"]} type="button">
+            アカウントをお持ちでない場合はこちら
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }
