@@ -1,21 +1,22 @@
 "use client";
 import { useState } from "react";
 
-export default function Register() {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault(); // フォームのデフォルト動作を防止
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    const res = await fetch("/api/register", {
+    const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
     const data = await res.json();
-    if (data.message) {
-      alert("Registration successful!");
+    if (data.token) {
+      localStorage.setItem("token", data.token); // 認証トークンを保存
+      alert("Login successful!");
     } else {
       alert(data.error);
     }
@@ -23,12 +24,12 @@ export default function Register() {
 
   return (
     <div>
-      <h1>Register</h1>
-      <form onSubmit={handleRegister}>
+      <h1>Login</h1>
+      <form onSubmit={handleLogin}>
         <input
           type="email"
           name="email"
-          autoComplete="username" // パスワードマネージャーにemailを認識させる
+          autoComplete="username" // ログイン用のemail
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -37,13 +38,13 @@ export default function Register() {
         <input
           type="password"
           name="password"
-          autoComplete="new-password" // 新規登録用のパスワード
+          autoComplete="current-password" // ログイン用のパスワード
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Register</button>
+        <button type="submit">Login</button>
       </form>
     </div>
   );
