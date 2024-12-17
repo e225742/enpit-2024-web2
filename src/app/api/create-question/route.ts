@@ -1,40 +1,20 @@
-import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import jwt from "jsonwebtoken";
+import { NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
-const SECRET_KEY = process.env.SECRET_KEY as string;
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    // Authorizationヘッダーからトークンを取得
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return NextResponse.json(
-        { error: "Unauthorized: No token provided" },
-        { status: 401 }
-      );
-    }
-
-    const token = authHeader.split(" ")[1]; // "Bearer トークン" の形式
-    let decoded;
-    try {
-      decoded = jwt.verify(token, SECRET_KEY); // トークンを検証
-    } catch (err) {
-      return NextResponse.json(
-        { error: "Unauthorized: Invalid token" },
-        { status: 401 }
-      );
-    }
-
     const { title, content, tags } = await req.json();
-
+    // console.log("Received tags:", tags); // 受け取ったタグの内容を確認
+    
     // タグが未定義の場合、空の配列を使用
     const tagList = tags ?? [];
 
-    // タグを作成し、存在する場合は取得
+    // タグを個別に作成し、存在する場合は取得
     const tagRecords = await Promise.all(
       tagList.map(async (tag: string) => {
+        // console.log(`Processing tag: ${tag}`); // 各タグの処理を開始
         return prisma.tag.upsert({
           where: { name: tag },
           update: {},
@@ -48,24 +28,17 @@ export async function POST(req: NextRequest) {
       data: {
         title,
         content,
-        userId: (decoded as jwt.JwtPayload).id, // トークンからユーザーIDを取得
         tags: {
-          connect: tagRecords.map((tagRecord) => ({ id: tagRecord.id })),
+          connect: tagRecords.map(tagRecord => ({ id: tagRecord.id })),
         },
       },
     });
 
     const response = NextResponse.json(newQuestion, { status: 201 });
-    response.headers.set(
-      "Access-Control-Allow-Origin",
-      "https://enpit-2024-web2-five.vercel.app"
-    );
+    response.headers.set('Access-Control-Allow-Origin', 'https://enpit-2024-web2-five.vercel.app');
     return response;
   } catch (error) {
-    console.error("Error creating question:", error);
-    return NextResponse.json(
-      { error: "Failed to create question" },
-      { status: 500 }
-    );
+    console.error('Error creating question:', error);
+    return NextResponse.json({ error: 'Failed to create question' }, { status: 500 });
   }
 }
