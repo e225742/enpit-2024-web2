@@ -7,7 +7,7 @@ import styles from "./page.module.css";
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter(); // useRouterフックを使用
+  const router = useRouter();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,8 +17,21 @@ export default function Register() {
       body: JSON.stringify({ email, password }),
     });
     const data = await res.json();
-    if (data.message) {
-      router.push("/"); // 成功時にトップページへ遷移
+    if (res.ok && data.message) {
+      // 登録成功時にログインを行う
+      const loginRes = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const loginData = await loginRes.json();
+      if (loginRes.ok && loginData.token) {
+        localStorage.setItem("token", loginData.token);
+        alert("登録 & ログインに成功しました！");
+        router.push("/");
+      } else {
+        alert(loginData.error || "登録は成功しましたが、ログインに失敗しました。");
+      }
     } else {
       alert(data.error);
     }
