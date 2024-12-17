@@ -30,6 +30,12 @@ const NewQuestionPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // 空文字または空白のみの場合は投稿をキャンセル
+    if (title.trim() === '' || content.trim() === '') {
+      alert('タイトルと内容は必須です。入力してください。');
+      return;
+    }
   
     if (isSubmittingQuestion) return;
   
@@ -60,7 +66,7 @@ const NewQuestionPage = () => {
     } finally {
       setIsSubmittingQuestion(false);
     }
-  };
+  };  
   
 
   return (

@@ -42,6 +42,13 @@ function QuestionContent({ question }: { question: any }) {
 
   const handleAnswerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // 空文字または空白のみの場合は投稿させない
+    if (answerContent.trim() === '') {
+      alert('回答内容を入力してください。');
+      return;
+    }
+    
     try {
       const res = await fetch('/api/create-answer', {
         method: 'POST',
