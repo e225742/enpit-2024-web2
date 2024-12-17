@@ -48,13 +48,13 @@ export default function Header() {
           {isLoggedIn ? (
             <>
               <li>
-                <Link href="/new_question">
-                  <button className={styles.questionButton}>＋質問する</button>
+                <Link href="/user_questions">
+                  <button className={styles.questionButton}>自分の質問</button>
                 </Link>
               </li>
               <li>
-                <Link href="/user_questions">
-                  <button className={styles.questionButton}>自分の質問</button>
+                <Link href="/new_question">
+                  <button className={styles.questionButton}>＋質問する</button>
                 </Link>
               </li>
               <li>

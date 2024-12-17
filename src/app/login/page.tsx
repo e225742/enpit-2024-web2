@@ -1,36 +1,40 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import styles from "./page.module.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
     const data = await res.json();
-    if (data.token) {
-      localStorage.setItem("token", data.token); // 認証トークンを保存
-      alert("Login successful!");
+    if (res.ok && data.token) {
+      localStorage.setItem("token", data.token);
+      alert("ログインに成功しました！");
+      router.push("/");
     } else {
-      alert(data.error);
+      alert(data.error || "ログインに失敗しました。");
     }
   };
 
   return (
-    <div>
-      <h1>Login</h1>
+    <div className={styles["auth-container"]}>
+      <h1>ログイン</h1>
+      <p>登録済みのアカウントでログインしてください。</p>
       <form onSubmit={handleLogin}>
         <input
           type="email"
           name="email"
-          autoComplete="username" // ログイン用のemail
-          placeholder="Email"
+          placeholder="メールアドレス"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -38,14 +42,18 @@ export default function Login() {
         <input
           type="password"
           name="password"
-          autoComplete="current-password" // ログイン用のパスワード
-          placeholder="Password"
+          placeholder="パスワード"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit">ログイン</button>
       </form>
+      <Link href="/register">
+        <button className={styles["link-button"]} type="button">
+          アカウントをお持ちでない場合はこちら
+        </button>
+      </Link>
     </div>
   );
 }
