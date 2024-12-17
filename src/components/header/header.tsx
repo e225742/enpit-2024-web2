@@ -53,6 +53,11 @@ export default function Header() {
                 </Link>
               </li>
               <li>
+                <Link href="/user_questions">
+                  <button className={styles.questionButton}>自分の質問</button>
+                </Link>
+              </li>
+              <li>
                 <button onClick={handleLogout} className={styles.logoutButton}>
                   ログアウト
                 </button>

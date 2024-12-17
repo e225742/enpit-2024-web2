@@ -39,7 +39,7 @@ function QuestionContent({ question }: { question: any }) {
 
   const markAsResolved = async () => {
     try {
-      const response = await fetch(`/api/close_question/${question.id}`, {
+      const response = await fetch(`/api/close-question/${question.id}`, {
         method: "PATCH",
       });
 
