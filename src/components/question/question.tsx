@@ -1,18 +1,39 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { marked } from 'marked';
 import { Maximize2, Minimize2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import Header from '@/components/header/header';
 import styles from './question.module.css';
+import { jwtDecode } from 'jwt-decode'
 
-function QuestionContent({ question }: { question: any }) {  
+type DecodedToken = {
+  id: number;
+  email: string;
+  exp: number;
+  iat: number;
+};
+
+function QuestionContent({ question }: { question: any }) {
   const [answerContent, setAnswerContent] = useState('');
   const [answers, setAnswers] = useState(question.answers);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isResolved, setIsResolved] = useState(question.isResolved);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (token) {
+      try {
+        const decoded = jwtDecode<DecodedToken>(token);
+        setCurrentUserId(decoded.id);
+      } catch (error) {
+        console.error("トークンのデコードに失敗しました", error);
+      }
+    }
+  }, []);
 
   const formatDate = (date: string | Date) => {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
@@ -27,7 +48,13 @@ function QuestionContent({ question }: { question: any }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: answerContent, questionId: question.id }),
       });
-      setAnswerContent('');
+      if (res.ok) {
+        const newAnswer = await res.json();
+        setAnswers((prev: any) => [...prev, newAnswer]);
+        setAnswerContent('');
+      } else {
+        console.error('回答の投稿に失敗しました');
+      }
     } catch (err) {
       console.error('Error creating answer:', err);
     }
@@ -41,13 +68,14 @@ function QuestionContent({ question }: { question: any }) {
     try {
       const response = await fetch(`/api/close-question/${question.id}`, {
         method: "PATCH",
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token') ?? ''}`
+        }
       });
 
       if (response.ok) {
         const result = await response.json();
         console.log("APIレスポンス:", result);
-
-        // 状態を更新
         setIsResolved(true);
       } else {
         const errorText = await response.text();
@@ -58,19 +86,23 @@ function QuestionContent({ question }: { question: any }) {
     }
   };
 
+  const isOwner = currentUserId === question.user.id; // 投稿者本人かどうか確認
+
   return (
     <div className={styles.container}>
       <Header />
       <div className={`${styles.mainContent} ${isExpanded ? styles.shrinkContent : ''}`}>
         <div className={styles.headerRow}>
           <h3>質問</h3>
-          <button
-            onClick={markAsResolved}
-            disabled={isResolved}
-            className={styles.resolveButton}
-          >
-            {isResolved ? "解決済み" : "解決済みにする"}
-          </button>
+          {isOwner && ( // 質問者本人のみ表示
+            <button
+              onClick={markAsResolved}
+              disabled={isResolved}
+              className={styles.resolveButton}
+            >
+              {isResolved ? "解決済み" : "解決済みにする"}
+            </button>
+          )}
         </div>
         <div className={styles.question}>
           <div className={styles.questionHeader}>
@@ -112,7 +144,7 @@ function QuestionContent({ question }: { question: any }) {
             {isExpanded ? '縮小' : '拡大'}
           </button>
         </div>
-        
+
         <form className={styles.answerForm} onSubmit={handleAnswerSubmit}>
           <textarea
             value={answerContent}
@@ -128,6 +160,7 @@ function QuestionContent({ question }: { question: any }) {
             <button
               type="button"
               className={styles.reloadButton}
+              onClick={() => window.location.reload()}
             >
               リロード
             </button>
