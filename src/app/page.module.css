@@ -130,11 +130,74 @@
 }
 
 .introSection {
-  background-color: #e0e0e0; /* サイドバーと同じ色 */
-  padding: 20px;
-  text-align: center;
+  display: flex;               
+  justify-content: space-between;
+  align-items: center;         
+  background-color: #e0e0e0;
+  /* ↓ パディングを縮小 */
+  padding: 20px 30px;
   margin-bottom: 20px;
 }
+
+/* 左側(メッセージ部分) */
+.introLeft {
+  flex: 1;                   
+  max-width: 600px;          
+  margin-right: 3%;
+  margin-left: 3%;
+  text-align: left;
+}
+
+.introLeft h2 {
+  margin-top: 0;   
+  margin-bottom: 0.5rem;  
+  /* ↓ 見出しのフォントサイズを小さめに */
+  font-size: 1.2rem;   
+}
+
+.introLeft p {
+  /* ↓ テキストのフォントサイズをやや小さめに、行間も少しだけ狭める */
+  font-size: 1rem;  
+  line-height: 1.4;
+  margin-bottom: 0;
+}
+
+/* 右側(ランキング部分) */
+.introRight {
+  /* ↓ 幅をやや小さくする */
+  width: 30%;             
+  background-color: #fafafa;
+  /* ↓ 内側のパディングも控えめに */
+  padding: 10px 15px;      
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.introRight h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;  /* 見出しをやや小さく */
+}
+
+.userRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;  
+  border-bottom: 1px dashed #ccc;
+}
+
+.userRow:last-child {
+  border-bottom: none;
+}
+
+.userNickname {
+  font-weight: bold;
+}
+
+.userAnswerCount {
+  color: #666;
+}
+
 
 .markdownContent {
   background-color: #e0e0e0; /* 灰色の背景色 */
