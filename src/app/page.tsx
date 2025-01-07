@@ -58,7 +58,7 @@ export default async function Home() {
       <div className={styles.introSection}>
         <h2>相談広場へようこそ！</h2>
         <p>
-          OSの課題について質問をたくさん聞いてね〜 <br />
+          課題について質問をたくさん聞いてね〜 <br />
           匿名で授業や課題について分からないことを質問できるよ！ <br />
           学サポのTAや友人が答えてくれるよ！！
         </p>

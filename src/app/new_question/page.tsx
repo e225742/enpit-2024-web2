@@ -71,7 +71,7 @@ const NewQuestionPage = () => {
 
   return (
     <div className={styles.container}>
-      <h1>OS課題相談広場</h1>
+      <h1>課題相談広場</h1>
       <form onSubmit={handleSubmit}>
         <div className={styles.inputGroup}>
           <input

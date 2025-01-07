@@ -26,12 +26,12 @@ export default function Header() {
   return (
     <div className={styles.header}>
       <Head>
-        <title>OS課題相談広場</title>
+        <title>課題相談広場</title>
       </Head>
       <div className={styles.left}>
         <h1>
           <Link href="/" className={styles.link}>
-            OS課題相談広場
+            課題相談広場
           </Link>
         </h1>
       </div>
