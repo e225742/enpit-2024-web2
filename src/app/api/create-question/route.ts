@@ -5,16 +5,13 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
-    const { title, content, tags } = await req.json();
-    // console.log("Received tags:", tags); // 受け取ったタグの内容を確認
-    
-    // タグが未定義の場合、空の配列を使用
+    const { title, content, tags, images } = await req.json(); // imagesもリクエストデータから取得
     const tagList = tags ?? [];
+    const imageUrls = images ?? [];
 
-    // タグを個別に作成し、存在する場合は取得
+    // タグを作成または取得
     const tagRecords = await Promise.all(
       tagList.map(async (tag: string) => {
-        // console.log(`Processing tag: ${tag}`); // 各タグの処理を開始
         return prisma.tag.upsert({
           where: { name: tag },
           update: {},
@@ -23,14 +20,21 @@ export async function POST(req: Request) {
       })
     );
 
-    // 質問を作成し、タグと関連付け
+    // 質問を作成し、画像とタグを関連付け
     const newQuestion = await prisma.question.create({
       data: {
         title,
         content,
         tags: {
-          connect: tagRecords.map(tagRecord => ({ id: tagRecord.id })),
+          connect: tagRecords.map((tagRecord) => ({ id: tagRecord.id })),
         },
+        images: {
+          create: imageUrls.map((url: string) => ({ url })), // 画像URLをImageテーブルに登録
+        },
+      },
+      include: {
+        images: true, // 作成した質問に紐付いた画像を返す
+        tags: true,
       },
     });
 

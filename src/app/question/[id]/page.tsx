@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 async function fetchQuestion(id: number) {
   const question = await prisma.question.findUnique({
     where: { id },
-    include: { answers: true },
+    include: { answers: true, images: true },
   });
   return question;
 }

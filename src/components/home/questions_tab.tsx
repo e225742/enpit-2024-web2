@@ -12,8 +12,14 @@ type Question = {
   content: string;
   isResolved: boolean;
   createdAt: Date;
-  tags: Tag[]
+  tags: Tag[];
+  images: Image[];
 };
+
+type Image = {
+  id: number;
+  url: string;
+}
 
 type Tag = {
   id: number;
@@ -75,6 +81,20 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
                 {formatDate(question.createdAt)}
               </div>
             </div>
+          {/* 画像表示部分 */}
+          {question.images.length > 0 && (
+            <div className={styles.imageGrid}>
+              {question.images.map((image) => (
+                <img
+                  key={image.id}
+                  src={image.url}
+                  alt="添付画像"
+                  className={styles.image}
+                  onError={(e) => (e.currentTarget.src = '/fallback-image.jpg')} // フォールバック画像
+                />
+              ))}
+            </div>
+          )}
             <div
               className={styles.markdownContent}
               dangerouslySetInnerHTML={{ __html: marked(question.content) }}

@@ -28,7 +28,7 @@ export async function GET(req: Request) {
         isResolved: resolvedStatus,  // isResolvedフィルタリングを追加
       },
       orderBy: { createdAt: 'desc' },
-      include: { tags: true },
+      include: { images: true, tags: true },
     });
 
     return NextResponse.json(questions, { status: 200 });

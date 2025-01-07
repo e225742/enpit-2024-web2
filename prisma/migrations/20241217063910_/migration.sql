@@ -28,6 +28,15 @@ CREATE TABLE "Tag" (
 );
 
 -- CreateTable
+CREATE TABLE "Image" (
+    "id" SERIAL NOT NULL,
+    "url" TEXT NOT NULL,
+    "questionId" INTEGER NOT NULL,
+
+    CONSTRAINT "Image_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "_QuestionTags" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
@@ -44,6 +53,9 @@ CREATE INDEX "_QuestionTags_B_index" ON "_QuestionTags"("B");
 
 -- AddForeignKey
 ALTER TABLE "Answer" ADD CONSTRAINT "Answer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Image" ADD CONSTRAINT "Image_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_QuestionTags" ADD CONSTRAINT "_QuestionTags_A_fkey" FOREIGN KEY ("A") REFERENCES "Question"("id") ON DELETE CASCADE ON UPDATE CASCADE;

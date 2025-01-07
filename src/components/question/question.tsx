@@ -79,6 +79,20 @@ function QuestionContent({ question }: { question: any }) {
               投稿日時: {formatDate(question.createdAt)}
             </span>
           </div>
+          {/* 添付画像の表示 */}
+          {question.images.length > 0 && (
+            <div className={styles.imageGrid}>
+              {question.images.map((image: any) => (
+                <img
+                  key={image.id}
+                  src={image.url}
+                  alt="添付画像"
+                  className={styles.image}
+                  onError={(e) => (e.currentTarget.src = '/fallback-image.jpg')} // フォールバック画像
+                />
+              ))}
+            </div>
+          )}
           <div className={styles.content}>
             <div dangerouslySetInnerHTML={{ __html: marked(question.content) }} />
           </div>

@@ -13,7 +13,13 @@ type Question = {
   isResolved: boolean;
   createdAt: Date;
   tags: Tag[]; // タグを追加
+  images: Image[];
 };
+
+type Image = {
+  id: number;
+  url: string;
+}
 
 type Tag = {
   id: number;
@@ -25,7 +31,7 @@ async function fetchLatestQuestions(): Promise<Question[]> {
   return await prisma.question.findMany({
     orderBy: { createdAt: 'desc' },
     take: 10, // 必要に応じて最新10件だけ取得するなど制限可能
-    include: { tags: true }, // 質問に関連するタグも取得
+    include: { tags: true, images: true }, // 質問に関連するタグも取得
   });
 }
 
@@ -33,7 +39,7 @@ async function fetchUnresolvedQuestions(): Promise<Question[]> {
   return await prisma.question.findMany({
     where: { isResolved: false },
     orderBy: { createdAt: 'desc' },
-    include: { tags: true }, // 質問に関連するタグも取得
+    include: { tags: true, images: true }, // 質問に関連するタグも取得
   });
 }
 

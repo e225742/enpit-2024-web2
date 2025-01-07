@@ -154,4 +154,19 @@
   border-radius: 0.25rem;
 }
 
+.imageGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.image {
+  max-width: 200px;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
 /* 既存のスタイルは省略 */

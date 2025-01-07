@@ -19,11 +19,56 @@ const NewQuestionPage = () => {
   const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false); // 質問作成中フラグ
   const [isCreatingTag, setIsCreatingTag] = useState(false); // タグ作成中フラグ
   const router = useRouter();
+  const [images, setImages] = useState<File[]>([]);
+  const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
+  
+
+  // 画像選択処理
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setImages([...images, ...Array.from(e.target.files)]);
+    }
+  };
+
+  // 画像アップロード処理
+  const uploadImages = async () => {
+    const urls: string[] = [];
+    for (const image of images) {
+      const formData = new FormData();
+      formData.append('file', image);
+  
+      try {
+        console.log('Uploading image:', image.name); // ファイル名を確認
+        const res = await fetch('/api/upload-image', {
+          method: 'POST',
+          body: formData,
+        });
+  
+        if (!res.ok) {
+          const errorData = await res.json();
+          console.error('Image upload failed:', errorData.message); // エラーメッセージを表示
+          continue;
+        }
+  
+        const data = await res.json();
+        console.log('Uploaded image URL:', data.url); // 成功したURLをログ
+        urls.push(data.url);
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
+    }
+    setUploadedImageUrls(urls);
+    return urls;
+  };
+  
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (isSubmittingQuestion) return; // 質問作成中なら何もしない
+    const imageUrls = await uploadImages();
+    console.log('Collected Image URLs:', imageUrls); // 画像URLを確認
 
     setIsSubmittingQuestion(true); // 質問作成中を設定
     try {
@@ -36,6 +81,7 @@ const NewQuestionPage = () => {
           title,
           content,
           tags: selectedTags.map(tag => tag.name),
+          images: imageUrls,
         }),
       });
 
@@ -75,7 +121,17 @@ const NewQuestionPage = () => {
           />
         </div>
         <div className={styles.buttonGroup}>
-          <button type="button" className={styles.imageButton}>画像添付</button>
+          <label className={styles.imageButton}>
+            画像添付
+            <input type="file" multiple onChange={handleImageChange} style={{ display: 'none' }} />
+          </label>
+        </div>
+        <div>
+          {images.map((file, idx) => (
+            <p key={idx}>{file.name}</p>
+          ))}
+        </div>
+        <div className={styles.buttonGroup}>
           <button type="button" className={styles.editButton}>エディタ</button>
           <button type="button" className={styles.previewButton}>プレビュー</button>
         </div>

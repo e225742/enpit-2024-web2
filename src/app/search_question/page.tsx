@@ -14,6 +14,11 @@ type Tag = {
   name: string;
 };
 
+type Image = {
+  id: number;
+  url: string;
+}
+
 type IsResolved = boolean;
 
 type Question = {
@@ -23,6 +28,7 @@ type Question = {
   createdAt: string;
   isResolved: boolean;
   tags: Tag[];
+  images: Image[];
 };
 
 const formatDate = (date: string) => {
@@ -158,6 +164,20 @@ const SearchPage: React.FC = () => {
                   {formatDate(question.createdAt)}
                 </div>
               </div>
+              {/* 添付画像 */}
+              {question.images && question.images.length > 0 && (
+                <div className={styles.imageGrid}>
+                  {question.images.map((image) => (
+                    <img
+                      key={image.id}
+                      src={image.url}
+                      alt="添付画像"
+                      className={styles.image}
+                      onError={(e) => (e.currentTarget.src = '/fallback-image.jpg')} // フォールバック画像
+                    />
+                  ))}
+                </div>
+              )}
               <div
                 className={styles.markdownContent}
                 dangerouslySetInnerHTML={{ __html: marked(question.content) }}

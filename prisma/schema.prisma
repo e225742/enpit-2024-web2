@@ -14,6 +14,7 @@ model Question {
   createdAt  DateTime @default(now())
   isResolved Boolean  @default(false)
   answers    Answer[]
+  images     Image[]
   tags       Tag[]    @relation("QuestionTags")
 }
 
@@ -29,4 +30,11 @@ model Tag {
   id        Int        @id @default(autoincrement())
   name      String     @unique
   questions Question[] @relation("QuestionTags")
+}
+
+model Image {
+  id         Int      @id @default(autoincrement())
+  url        String
+  questionId Int
+  question   Question @relation(fields: [questionId], references: [id])
 }
