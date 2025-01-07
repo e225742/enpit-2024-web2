@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
+  const keyword = url.searchParams.get('keyword') || '';//キーワード取得
   const tagNames = url.searchParams.get('tag')?.split(',') || []; // タグを配列として取得
 
   const isResolvedParam = url.searchParams.get('isResolved');
@@ -13,6 +14,19 @@ export async function GET(req: Request) {
   try {
     const questions = await prisma.question.findMany({
       where: {
+        //キーワードでフィルタリング（部分一致OK）
+        OR: [
+          { title: { contains: keyword, mode: 'insensitive' } },
+          { content: { contains: keyword, mode: 'insensitive' } },
+          {
+            answers: {
+              some: {
+                content: { contains: keyword, mode: 'insensitive' },
+              },
+            },
+          },
+        ],
+
         // タグフィルタリング
         tags: tagNames.length > 0
           ? {
