@@ -1,14 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import { marked } from 'marked';
 import { Maximize2, Minimize2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import Header from '@/components/header/header';
 import styles from './question.module.css';
-import { jwtDecode } from 'jwt-decode'
 
+// トークンのデコード用の型
 type DecodedToken = {
   id: number;
   email: string;
@@ -16,6 +17,7 @@ type DecodedToken = {
   iat: number;
 };
 
+// QuestionContent コンポーネント
 function QuestionContent({ question }: { question: any }) {
   const [answerContent, setAnswerContent] = useState('');
   const [answers, setAnswers] = useState(question.answers);
@@ -27,6 +29,7 @@ function QuestionContent({ question }: { question: any }) {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     if (token) {
       try {
+        // jwtDecode を利用してユーザーIDを取得
         const decoded = jwtDecode<DecodedToken>(token);
         setCurrentUserId(decoded.id);
       } catch (error) {
@@ -35,14 +38,16 @@ function QuestionContent({ question }: { question: any }) {
     }
   }, []);
 
+  // 日付フォーマット用関数
   const formatDate = (date: string | Date) => {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     return format(dateObj, 'yyyy年MM月dd日 HH:mm', { locale: ja });
   };
 
+  // 回答投稿時の処理
   const handleAnswerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // 空文字または空白のみの場合は投稿させない
     if (answerContent.trim() === '') {
       alert('回答内容を入力してください。');
@@ -50,11 +55,19 @@ function QuestionContent({ question }: { question: any }) {
     }
     
     try {
+      // ログイン時のみトークンを Authorization ヘッダーに付与
+      const token = localStorage.getItem('token');
+      const headers: HeadersInit = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const res = await fetch('/api/create-answer', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ content: answerContent, questionId: question.id }),
       });
+
       if (res.ok) {
         const newAnswer = await res.json();
         setAnswers((prev: any) => [...prev, newAnswer]);
@@ -67,10 +80,12 @@ function QuestionContent({ question }: { question: any }) {
     }
   };
 
+  // 回答フォームの拡大・縮小
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
 
+  // 質問を解決済みにする処理
   const markAsResolved = async () => {
     try {
       const response = await fetch(`/api/close-question/${question.id}`, {
@@ -93,7 +108,8 @@ function QuestionContent({ question }: { question: any }) {
     }
   };
 
-  const isOwner = currentUserId === question.user.id; // 投稿者本人かどうか確認
+  // 現在のユーザーが質問者かどうかを判定
+  const isOwner = currentUserId === question.user.id;
 
   return (
     <div className={styles.container}>
@@ -101,7 +117,7 @@ function QuestionContent({ question }: { question: any }) {
       <div className={`${styles.mainContent} ${isExpanded ? styles.shrinkContent : ''}`}>
         <div className={styles.headerRow}>
           <h3>質問</h3>
-          {isOwner && ( // 質問者本人のみ表示
+          {isOwner && (
             <button
               onClick={markAsResolved}
               disabled={isResolved}
