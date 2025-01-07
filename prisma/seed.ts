@@ -3,22 +3,32 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create users
-  const user1 = await prisma.user.create({
-    data: {
+  // 既存データを削除
+  await prisma.answer.deleteMany();
+  await prisma.question.deleteMany();
+  await prisma.tag.deleteMany();
+  await prisma.user.deleteMany();
+
+  // ユーザーを作成
+  const user1 = await prisma.user.upsert({
+    where: { email: 'user1@example.com' },
+    update: {},
+    create: {
       email: 'user1@example.com',
       password: 'password123',
     },
   });
 
-  const user2 = await prisma.user.create({
-    data: {
+  const user2 = await prisma.user.upsert({
+    where: { email: 'user2@example.com' },
+    update: {},
+    create: {
       email: 'user2@example.com',
       password: 'password456',
     },
   });
 
-  // Create tags
+  // タグを作成
   const tags = [
     'プログラミングⅠ',
     'プログラミングⅡ',
@@ -54,7 +64,7 @@ async function main() {
     )
   );
 
-  // Create questions
+  // 質問を作成
   const questions = [
     {
       title: 'プログラミングⅠのループ処理について',
@@ -106,9 +116,15 @@ async function main() {
     },
   ];
 
-  await prisma.question.createMany({ data: questions });
+  await Promise.all(
+    questions.map((question) =>
+      prisma.question.create({
+        data: question,
+      })
+    )
+  );
 
-  // Create answers
+  // 回答を作成
   const answers = [
     {
       content: '無限ループを避けるには終了条件を明確に設定し、カウンタ変数を使うのがおすすめです。',
