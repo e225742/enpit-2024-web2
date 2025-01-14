@@ -42,7 +42,11 @@ export default function Header() {
               <button className={styles.questionButton}>質問検索</button>
             </Link>
           </li>
-          <li>使い方</li>
+          <li>
+            <Link href="/help">
+              <button className={styles.questionButton}>使い方</button>
+            </Link>
+          </li>
 
           {/* ログインしている場合 */}
           {isLoggedIn ? (
