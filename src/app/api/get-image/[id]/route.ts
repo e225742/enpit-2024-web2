@@ -15,7 +15,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
     return new Response(image.binaryData, {
       headers: {
-        'Content-Type': 'image/png', // 必要に応じて動的に変更
+        'Content-Type': 'image/jpeg', // 必要に応じて動的に変更
         'Content-Length': image.binaryData.length.toString(),
       },
     });

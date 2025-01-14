@@ -31,7 +31,16 @@ export async function GET(req: Request) {
       include: { images: true, tags: true },
     });
 
-    return NextResponse.json(questions, { status: 200 });
+    const formattedQuestions = questions.map((question) => ({
+      ...question,
+      images: question.images.map((image) => ({
+        ...image,
+        binaryData: Buffer.from(image.binaryData).toString('base64'), // Base64変換
+      })),
+    }));
+
+    // return NextResponse.json(questions, { status: 200 });
+    return NextResponse.json(formattedQuestions, { status: 200 });
   } catch (error) {
     console.error('Error fetching questions:', error);
     return NextResponse.json({ error: 'Failed to fetch questions' }, { status: 500 });

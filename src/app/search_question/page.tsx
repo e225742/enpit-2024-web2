@@ -16,8 +16,10 @@ type Tag = {
 
 type Image = {
   id: number;
-  url: string;
-}
+  questionId: number;
+  binaryData: string; // Base64形式
+  createdAt: Date;
+};
 
 type IsResolved = boolean;
 
@@ -34,6 +36,10 @@ type Question = {
 const formatDate = (date: string) => {
   const dateObj = new Date(date);
   return format(dateObj, 'yyyy年MM月dd日 HH:mm', { locale: ja });
+};
+
+const toDataURL = (base64: string): string => {
+  return `data:image/jpeg;base64,${base64}`; // 必要に応じてMIMEタイプを変更
 };
 
 const SearchPage: React.FC = () => {
@@ -170,7 +176,7 @@ const SearchPage: React.FC = () => {
                   {question.images.map((image) => (
                     <img
                       key={image.id}
-                      src={image.url}
+                      src={toDataURL(image.binaryData)}
                       alt="添付画像"
                       className={styles.image}
                       onError={(e) => (e.currentTarget.src = '/fallback-image.jpg')} // フォールバック画像

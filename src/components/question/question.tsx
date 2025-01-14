@@ -19,6 +19,10 @@ function QuestionContent({ question }: { question: any }) {
     return format(dateObj, 'yyyy年MM月dd日 HH:mm', { locale: ja });
   };
 
+  const toDataURL = (base64: string): string => {
+    return `data:image/jpeg;base64,${base64}`; // 必要に応じてMIMEタイプを変更
+  };
+
   const handleAnswerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -85,7 +89,7 @@ function QuestionContent({ question }: { question: any }) {
               {question.images.map((image: any) => (
                 <img
                   key={image.id}
-                  src={image.url}
+                  src={toDataURL(image.binaryData)}
                   alt="添付画像"
                   className={styles.image}
                   onError={(e) => (e.currentTarget.src = '/fallback-image.jpg')} // フォールバック画像

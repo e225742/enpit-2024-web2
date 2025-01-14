@@ -9,7 +9,17 @@ async function fetchQuestion(id: number) {
     where: { id },
     include: { answers: true, images: true },
   });
-  return question;
+  if (!question) return null;
+
+  const formattedQuestion = {
+    ...question,
+    images: question.images.map((image) => ({
+      ...image,
+      binaryData: Buffer.from(image.binaryData).toString('base64'),
+    })),
+  };
+
+  return formattedQuestion;
 }
 
 export default async function QuestionPage({ params }: { params: { id: string } }) {

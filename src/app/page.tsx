@@ -28,13 +28,13 @@ type Question = {
   images: Image[];
 };
 
-
+// Prismaから取得したデータをBase64形式にフォーマット
 const formatQuestions = (questions: any[]): Question[] => {
   return questions.map((question) => ({
     ...question,
     images: question.images.map((image: Image) => ({
       ...image,
-      binarydata: Buffer.from(image.binaryData).toString('base64'),
+      binaryData: Buffer.from(image.binaryData).toString('base64'), // Base64形式として変換
     })),
   }));
 };
