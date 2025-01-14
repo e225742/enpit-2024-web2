@@ -18,8 +18,10 @@ type Question = {
 
 type Image = {
   id: number;
-  url: string;
-}
+  questionId: number;
+  binaryData: string; // Base64形式
+  createdAt: Date;
+};
 
 type Tag = {
   id: number;
@@ -34,6 +36,10 @@ type QuestionsTabProps = {
 
 // タブの状態を表す文字列リテラル型を定義
 type Tab = 'latest' | 'unresolved';
+
+const toDataURL = (base64: string): string => {
+  return `data:image/png;base64,${base64}`; // 必要に応じてMIMEタイプを変更
+};
 
 const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuestions, tags }) => {
   const [activeTab, setActiveTab] = useState<Tab>('latest'); // デフォルトで 'latest' を選択
@@ -87,7 +93,7 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
               {question.images.map((image) => (
                 <img
                   key={image.id}
-                  src={image.url}
+                  src={toDataURL(image.binaryData)} 
                   alt="添付画像"
                   className={styles.image}
                   onError={(e) => (e.currentTarget.src = '/fallback-image.jpg')} // フォールバック画像

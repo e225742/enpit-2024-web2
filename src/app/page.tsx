@@ -6,61 +6,72 @@ import QuestionsTab from '@/components/home/questions_tab';
 
 const prisma = new PrismaClient();
 
+type Tag = { 
+  id: number; 
+  name: string 
+};
+
+type Image = {
+  id: number;
+  questionId: number;
+  binaryData: string; // Base64形式
+  createdAt: Date;
+};
+
 type Question = {
   id: number;
   title: string;
   content: string;
   isResolved: boolean;
   createdAt: Date;
-  tags: Tag[]; // タグを追加
+  tags: Tag[];
   images: Image[];
 };
 
-type Image = {
-  id: number;
-  url: string;
-}
 
-type Tag = {
-  id: number;
-  name: string;
+const formatQuestions = (questions: any[]): Question[] => {
+  return questions.map((question) => ({
+    ...question,
+    images: question.images.map((image: Image) => ({
+      ...image,
+      binarydata: Buffer.from(image.binaryData).toString('base64'),
+    })),
+  }));
 };
 
-// サーバーサイドで最新の質問と未解決の質問を取得する関数
 async function fetchLatestQuestions(): Promise<Question[]> {
-  return await prisma.question.findMany({
+  const questions = await prisma.question.findMany({
     orderBy: { createdAt: 'desc' },
-    take: 10, // 必要に応じて最新10件だけ取得するなど制限可能
-    include: { tags: true, images: true }, // 質問に関連するタグも取得
+    take: 10,
+    include: { tags: true, images: true },
   });
+
+  return formatQuestions(questions);
 }
 
 async function fetchUnresolvedQuestions(): Promise<Question[]> {
-  return await prisma.question.findMany({
+  const questions = await prisma.question.findMany({
     where: { isResolved: false },
     orderBy: { createdAt: 'desc' },
-    include: { tags: true, images: true }, // 質問に関連するタグも取得
+    include: { tags: true, images: true },
   });
+
+  return formatQuestions(questions);
 }
 
-// サーバーサイドでタグを取得する関数
 async function fetchTags(): Promise<Tag[]> {
-  const tags = await prisma.tag.findMany({
-    orderBy: { name: 'asc' },
-  });
+  const tags = await prisma.tag.findMany({ orderBy: { name: 'asc' } });
   return tags;
 }
 
-// サーバーコンポーネント
 export default async function Home() {
-  const tags = await fetchTags(); // タグ一覧を取得
+  const tags = await fetchTags();
   const latestQuestions = await fetchLatestQuestions();
   const unresolvedQuestions = await fetchUnresolvedQuestions();
 
   return (
     <div>
       <Header />
-
       <div className={styles.introSection}>
         <h2>相談広場へようこそ！</h2>
         <p>
@@ -69,15 +80,9 @@ export default async function Home() {
           学サポのTAや友人が答えてくれるよ！！
         </p>
       </div>
-
-      {/* タブコンポーネントにデータを渡す */}
-      <QuestionsTab
-        questions={latestQuestions}
-        unresolvedQuestions={unresolvedQuestions}
-        tags={tags}
-      />
+      <QuestionsTab questions={latestQuestions} unresolvedQuestions={unresolvedQuestions} tags={tags} />
     </div>
   );
 }
 
-export const revalidate = 0; // キャッシュを無効化して常に最新のデータを取得
+export const revalidate = 0;

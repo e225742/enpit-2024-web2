@@ -17,11 +17,8 @@ const NewQuestionPage = () => {
   const [content, setContent] = useState('');
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false); // 質問作成中フラグ
-  const [isCreatingTag, setIsCreatingTag] = useState(false); // タグ作成中フラグ
   const router = useRouter();
   const [images, setImages] = useState<File[]>([]);
-  const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
-  
 
   // 画像選択処理
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,48 +27,33 @@ const NewQuestionPage = () => {
     }
   };
 
-  // 画像アップロード処理
-  const uploadImages = async () => {
-    const urls: string[] = [];
-    for (const image of images) {
-      const formData = new FormData();
-      formData.append('file', image);
-  
-      try {
-        console.log('Uploading image:', image.name); // ファイル名を確認
-        const res = await fetch('/api/upload-image', {
-          method: 'POST',
-          body: formData,
-        });
-  
-        if (!res.ok) {
-          const errorData = await res.json();
-          console.error('Image upload failed:', errorData.message); // エラーメッセージを表示
-          continue;
-        }
-  
-        const data = await res.json();
-        console.log('Uploaded image URL:', data.url); // 成功したURLをログ
-        urls.push(data.url);
-      } catch (error) {
-        console.error('Error uploading image:', error);
-      }
-    }
-    setUploadedImageUrls(urls);
-    return urls;
+  // ファイルをBase64形式に変換
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        const base64String = result.split(',')[1];
+        resolve(base64String);
+      };
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
   };
-  
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isSubmittingQuestion) return; // 質問作成中なら何もしない
-    const imageUrls = await uploadImages();
-    console.log('Collected Image URLs:', imageUrls); // 画像URLを確認
+    if (isSubmittingQuestion) return;
 
-    setIsSubmittingQuestion(true); // 質問作成中を設定
+    setIsSubmittingQuestion(true);
     try {
+      // 画像をBase64形式に変換
+      const base64Images = await Promise.all(
+        images.map((image) => convertToBase64(image))
+      );
+
+      // 質問作成APIにデータを送信
       const res = await fetch('/api/create-question', {
         method: 'POST',
         headers: {
@@ -80,8 +62,8 @@ const NewQuestionPage = () => {
         body: JSON.stringify({
           title,
           content,
-          tags: selectedTags.map(tag => tag.name),
-          images: imageUrls,
+          tags: selectedTags.map((tag) => tag.name),
+          images: base64Images.map((binaryData) => ({ binaryData })),
         }),
       });
 
@@ -93,10 +75,9 @@ const NewQuestionPage = () => {
     } catch (err) {
       console.error('Error creating question:', err);
     } finally {
-      setIsSubmittingQuestion(false); // 質問作成処理終了
+      setIsSubmittingQuestion(false);
     }
   };
-
 
   return (
     <div className={styles.container}>
@@ -109,15 +90,14 @@ const NewQuestionPage = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className={styles.input}
-            disabled={isSubmittingQuestion || isCreatingTag} // 質問作成中またはタグ作成中は無効化
+            disabled={isSubmittingQuestion}
           />
         </div>
         <div className={styles.inputGroup}>
-          <TagSelector 
-            selectedTags={selectedTags} 
-            setSelectedTags={setSelectedTags} 
-            isProcessing={isCreatingTag} // タグ作成中フラグを渡す
-            setIsProcessing={setIsCreatingTag} // タグ作成中フラグを更新
+          <TagSelector
+            selectedTags={selectedTags}
+            setSelectedTags={setSelectedTags}
+            isProcessing={isSubmittingQuestion}
           />
         </div>
         <div className={styles.buttonGroup}>
@@ -131,32 +111,29 @@ const NewQuestionPage = () => {
             <p key={idx}>{file.name}</p>
           ))}
         </div>
-        <div className={styles.buttonGroup}>
-          <button type="button" className={styles.editButton}>エディタ</button>
-          <button type="button" className={styles.previewButton}>プレビュー</button>
-        </div>
         <div className={styles.textAreaContainer}>
           <textarea
             value={content}
-            onChange={(e) => setContent(e.target.value)} // 入力内容をステートに反映
+            onChange={(e) => setContent(e.target.value)}
             placeholder="Markdown形式で質問内容を入力してください"
             rows={10}
             className={styles.textArea}
-            disabled={isSubmittingQuestion || isCreatingTag} // 質問作成中またはタグ作成中は無効化
+            disabled={isSubmittingQuestion}
           />
           <div
             className={styles.previewArea}
-            dangerouslySetInnerHTML={{ __html: marked(content) }} // MarkdownをHTMLに変換して表示
+            dangerouslySetInnerHTML={{ __html: marked(content) }}
           />
         </div>
-        
         <div className={styles.footer}>
           <Link href="/">
-            <button type="button" className={styles.cancelButton} disabled={isSubmittingQuestion || isCreatingTag} >
-              キャンセル</button>
+            <button type="button" className={styles.cancelButton} disabled={isSubmittingQuestion}>
+              キャンセル
+            </button>
           </Link>
-          <button type="submit" className={styles.submitButton} disabled={isSubmittingQuestion || isCreatingTag} >
-          {isSubmittingQuestion ? '作成中...' : '作成'}</button>
+          <button type="submit" className={styles.submitButton} disabled={isSubmittingQuestion}>
+            {isSubmittingQuestion ? '作成中...' : '作成'}
+          </button>
         </div>
       </form>
     </div>

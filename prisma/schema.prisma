@@ -33,8 +33,9 @@ model Tag {
 }
 
 model Image {
-  id         Int      @id @default(autoincrement())
-  url        String
-  questionId Int
-  question   Question @relation(fields: [questionId], references: [id])
+  id          Int       @id @default(autoincrement())
+  questionId  Int
+  question    Question  @relation(fields: [questionId], references: [id])
+  binaryData  Bytes     // 画像データを保存するバイナリカラム
+  createdAt   DateTime  @default(now())
 }
