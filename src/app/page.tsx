@@ -94,9 +94,10 @@ export default async function Home() {
           {topUsers.length === 0 ? (
             <p>まだ回答したユーザーはいません。</p>
           ) : (
-            topUsers.map((user) => (
+            topUsers.map((user, index) => (
               <div key={user.id} className={styles.userRow}>
                 <span className={styles.userNickname}>
+                  {index === 0 && <span className={styles.crown}>👑 </span>}
                   {user.nickname ?? "名無し"}
                 </span>
                 <span className={styles.userAnswerCount}>
@@ -106,6 +107,7 @@ export default async function Home() {
             ))
           )}
         </div>
+
       </div>
 
 
