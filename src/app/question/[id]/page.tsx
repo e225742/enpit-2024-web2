@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 async function fetchQuestion(id: number) {
   const question = await prisma.question.findUnique({
     where: { id },
-    include: { answers: true, images: true },
+    include: { answers: true, user: true, images: true }, // userを取得
   });
   if (!question) return null;
 
@@ -26,7 +26,6 @@ export default async function QuestionPage({ params }: { params: { id: string } 
   const questionId = parseInt(params.id);
   const question = await fetchQuestion(questionId);
 
-  // null チェックを追加
   if (!question) {
     return (
       <div>

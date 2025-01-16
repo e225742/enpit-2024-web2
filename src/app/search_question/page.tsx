@@ -44,6 +44,7 @@ const toDataURL = (base64: string): string => {
 
 const SearchPage: React.FC = () => {
   const [status, setStatus] = useState<string | null>(null);
+  const [keyword, setKeyword] = useState<string>('');
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [selectedIsResolved, setSelectedIsResolved] = useState<IsResolved>(false);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -57,6 +58,11 @@ const SearchPage: React.FC = () => {
 
     try {
       const queryParams = new URLSearchParams();
+
+      //キーワードをクエリパラメータに追加
+      if (keyword.trim() !== "") {
+        queryParams.set("keyword", keyword.trim());
+      }
   
       // タグをクエリパラメータに追加
       if (selectedTags.length > 0) {
@@ -95,6 +101,8 @@ const SearchPage: React.FC = () => {
           placeholder="キーワードを入力してください（任意）"
           className={styles.textarea}
           disabled={loading}
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
         />
 
         <TagSelector
