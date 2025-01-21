@@ -44,7 +44,10 @@ function QuestionContent({ question }: { question: any }) {
     return format(dateObj, 'yyyy年MM月dd日 HH:mm', { locale: ja });
   };
 
-  // 回答投稿時の処理
+  const toDataURL = (base64: string): string => {
+    return `data:image/jpeg;base64,${base64}`; // 必要に応じてMIMEタイプを変更
+  };
+
   const handleAnswerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -134,6 +137,20 @@ function QuestionContent({ question }: { question: any }) {
               投稿日時: {formatDate(question.createdAt)}
             </span>
           </div>
+          {/* 添付画像の表示 */}
+          {question.images.length > 0 && (
+            <div className={styles.imageGrid}>
+              {question.images.map((image: any) => (
+                <img
+                  key={image.id}
+                  src={toDataURL(image.binaryData)}
+                  alt="添付画像"
+                  className={styles.image}
+                  onError={(e) => (e.currentTarget.src = '/fallback-image.jpg')} // フォールバック画像
+                />
+              ))}
+            </div>
+          )}
           <div className={styles.content}>
             <div dangerouslySetInnerHTML={{ __html: marked(question.content) }} />
           </div>

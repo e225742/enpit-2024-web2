@@ -7,9 +7,19 @@ const prisma = new PrismaClient();
 async function fetchQuestion(id: number) {
   const question = await prisma.question.findUnique({
     where: { id },
-    include: { answers: true, user: true }, // userを取得
+    include: { answers: true, user: true, images: true }, // userを取得
   });
-  return question;
+  if (!question) return null;
+
+  const formattedQuestion = {
+    ...question,
+    images: question.images.map((image) => ({
+      ...image,
+      binaryData: Buffer.from(image.binaryData).toString('base64'),
+    })),
+  };
+
+  return formattedQuestion;
 }
 
 export default async function QuestionPage({ params }: { params: { id: string } }) {

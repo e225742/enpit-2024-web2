@@ -12,7 +12,15 @@ type Question = {
   content: string;
   isResolved: boolean;
   createdAt: Date;
-  tags: Tag[]
+  tags: Tag[];
+  images: Image[];
+};
+
+type Image = {
+  id: number;
+  questionId: number;
+  binaryData: string; // Base64形式
+  createdAt: Date;
 };
 
 type Tag = {
@@ -28,6 +36,10 @@ type QuestionsTabProps = {
 
 // タブの状態を表す文字列リテラル型を定義
 type Tab = 'latest' | 'unresolved';
+
+const toDataURL = (base64: string): string => {
+  return `data:image/jpeg;base64,${base64}`; // 必要に応じてMIMEタイプを変更
+};
 
 const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuestions, tags }) => {
   const [activeTab, setActiveTab] = useState<Tab>('latest'); // デフォルトで 'latest' を選択
@@ -49,32 +61,34 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
             <h2>
               <Link href={`/question/${question.id}`}>{question.title}</Link>
             </h2>
-            {/* 投稿日時とタグを横並びに表示するため、同じdivで囲む */}
             <div className={styles.dateAndTags}>
-              {/* タグ一覧を一行で表示 */}
               <div className={styles.tagContainer}>
                 <span className={styles.tags}>
-                  {/* 解決状態のタグ */}
                   <span className={styles.tag} style={{ color: question.isResolved ? 'green' : 'red' }}>
                     {question.isResolved ? "解決済み" : "未解決"}
                   </span>
-
-                  {/* 質問に関連するタグ */}
-                  {question.tags && question.tags.length > 0 &&
-                    question.tags.map((tag) => (
-                      <span key={tag.id} className={styles.tag}>
-                        {tag.name}
-                      </span>
-                    ))
-                  }
+                  {question.tags.map((tag) => (
+                    <span key={tag.id} className={styles.tag}>{tag.name}</span>
+                  ))}
                 </span>
               </div>
-
-              {/* 投稿日時 */}
               <div className={styles.dateInfo}>
                 {formatDate(question.createdAt)}
               </div>
             </div>
+            {question.images.length > 0 && (
+              <div className={styles.imageGrid}>
+                {question.images.map((image) => (
+                  <img
+                    key={image.id}
+                    src={toDataURL(image.binaryData)} 
+                    alt="添付画像"
+                    className={styles.image}
+                    onError={(e) => (e.currentTarget.src = '/fallback-image.jpg')} // フォールバック画像
+                  />
+                ))}
+              </div>
+            )}
             <div
               className={styles.markdownContent}
               dangerouslySetInnerHTML={{ __html: marked(question.content) }}
@@ -86,8 +100,6 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
       )}
     </div>
   );
-  
-  
 
   return (
     <div className={styles.container}>
@@ -95,16 +107,12 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
         <p>タグ一覧</p>
         {tags.length > 0 ? (
           tags.map((tag) => (
-            <div key={tag.id}>
-              {tag.name}
-              <br />
-            </div>
+            <div key={tag.id}>{tag.name}</div>
           ))
         ) : (
           <p>タグがありません</p>
         )}
       </aside>
-
       <main className={styles.main}>
         <div className={styles.tabs}>
           <button
@@ -120,7 +128,6 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({ questions, unresolvedQuesti
             未解決の質問
           </button>
         </div>
-
         <div className={styles.tabContent}>
           {activeTab === 'latest' && renderQuestions(questions)}
           {activeTab === 'unresolved' && renderQuestions(unresolvedQuestions)}

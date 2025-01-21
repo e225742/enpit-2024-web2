@@ -14,6 +14,13 @@ type Tag = {
   name: string;
 };
 
+type Image = {
+  id: number;
+  questionId: number;
+  binaryData: string; // Base64形式
+  createdAt: Date;
+};
+
 type IsResolved = boolean;
 
 type Question = {
@@ -23,11 +30,16 @@ type Question = {
   createdAt: string;
   isResolved: boolean;
   tags: Tag[];
+  images: Image[];
 };
 
 const formatDate = (date: string) => {
   const dateObj = new Date(date);
   return format(dateObj, 'yyyy年MM月dd日 HH:mm', { locale: ja });
+};
+
+const toDataURL = (base64: string): string => {
+  return `data:image/jpeg;base64,${base64}`; // 必要に応じてMIMEタイプを変更
 };
 
 const SearchPage: React.FC = () => {
@@ -166,6 +178,20 @@ const SearchPage: React.FC = () => {
                   {formatDate(question.createdAt)}
                 </div>
               </div>
+              {/* 添付画像 */}
+              {question.images && question.images.length > 0 && (
+                <div className={styles.imageGrid}>
+                  {question.images.map((image) => (
+                    <img
+                      key={image.id}
+                      src={toDataURL(image.binaryData)}
+                      alt="添付画像"
+                      className={styles.image}
+                      onError={(e) => (e.currentTarget.src = '/fallback-image.jpg')} // フォールバック画像
+                    />
+                  ))}
+                </div>
+              )}
               <div
                 className={styles.markdownContent}
                 dangerouslySetInnerHTML={{ __html: marked(question.content) }}

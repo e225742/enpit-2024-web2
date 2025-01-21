@@ -19,6 +19,28 @@ const NewQuestionPage = () => {
   const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
   const [isCreatingTag, setIsCreatingTag] = useState(false);
   const router = useRouter();
+  const [images, setImages] = useState<File[]>([]);
+
+  // 画像選択処理
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setImages([...images, ...Array.from(e.target.files)]);
+    }
+  };
+
+  // ファイルをBase64形式に変換
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        const base64String = result.split(',')[1];
+        resolve(base64String);
+      };
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
 
   // ログイン状態の確認
   useEffect(() => {
@@ -41,6 +63,10 @@ const NewQuestionPage = () => {
   
     setIsSubmittingQuestion(true);
     try {
+      // 画像をBase64形式に変換
+      const base64Images = await Promise.all(
+        images.map((image) => convertToBase64(image))
+      );
       const res = await fetch("/api/create-question", {
         method: "POST",
         headers: {
@@ -51,6 +77,7 @@ const NewQuestionPage = () => {
           title,
           content,
           tags: selectedTags.map((tag) => tag.name),
+          images: base64Images.map((binaryData) => ({ binaryData })),
         }),
       });
   
@@ -66,8 +93,7 @@ const NewQuestionPage = () => {
     } finally {
       setIsSubmittingQuestion(false);
     }
-  };  
-  
+  };
 
   return (
     <div className={styles.container}>
@@ -87,20 +113,21 @@ const NewQuestionPage = () => {
           <TagSelector
             selectedTags={selectedTags}
             setSelectedTags={setSelectedTags}
+
             isProcessing={isCreatingTag}
             setIsProcessing={setIsCreatingTag}
           />
         </div>
         <div className={styles.buttonGroup}>
-          <button type="button" className={styles.imageButton}>
+          <label className={styles.imageButton}>
             画像添付
-          </button>
-          <button type="button" className={styles.editButton}>
-            エディタ
-          </button>
-          <button type="button" className={styles.previewButton}>
-            プレビュー
-          </button>
+            <input type="file" multiple onChange={handleImageChange} style={{ display: 'none' }} />
+          </label>
+        </div>
+        <div>
+          {images.map((file, idx) => (
+            <p key={idx}>{file.name}</p>
+          ))}
         </div>
         <div className={styles.textAreaContainer}>
           <textarea

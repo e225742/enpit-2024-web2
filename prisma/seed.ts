@@ -5,9 +5,11 @@ const prisma = new PrismaClient();
 async function main() {
   // 既存データを削除
   await prisma.answer.deleteMany();
+  await prisma.image.deleteMany(); 
   await prisma.question.deleteMany();
   await prisma.tag.deleteMany();
   await prisma.user.deleteMany();
+
 
   // ───────── ユーザーを複数作成 (ニックネーム付と無しを混在) ─────────
   const user1 = await prisma.user.upsert({
